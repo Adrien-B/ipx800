@@ -1,16 +1,52 @@
 {
-  "pluginAlias": "ExampleHomebridgePlugin",
+  "pluginAlias": "ipx800",
   "pluginType": "platform",
   "singular": true,
   "schema": {
-    "type": "object",
-    "properties": {
-      "name": {
-        "title": "Name",
-        "type": "string",
-        "required": true,
-        "default": "Example Dynamic Platform"
+    "url": {
+      "title": "ipx url",
+      "description": "ipx url with key",
+      "type": "string",
+      "required": true
+    },
+    "relays": {
+      "type": "array",
+      "description": "Relays must be in added in the same order as they are wired, without any unused relay",
+      "items": {
+        "title": "Relays",
+        "type": "object",
+        "properties": {
+          "displayName": {
+            "title": "display name",
+            "type": "string",
+            "required": true
+          },
+          "type": {
+            "title": "type",
+            "type": "string",
+            "required": true,
+            "default": "light",
+            "oneOf": [
+              { "title": "light", "enum": ["light"] },
+              { "title": "outlet", "enum": ["outlet"] },
+              { "title": "fan", "enum": ["fan"] }
+            ]
+          }
+        } 
       }
     }
-  }
+  },
+  "layout": [
+    "url",
+    {
+      "key": "relays",
+      "type": "array",
+      "orderable": true,
+      "buttonText": "Add relay",
+      "items": [
+        "relays[].displayName",
+        "relays[].type"
+      ]
+    }
+  ]
 }
