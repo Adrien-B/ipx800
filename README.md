@@ -8,7 +8,12 @@
 
 # Homebridge IPX800 Platform Plugin
 
+This plugin brings support of IPX800 to homekit.
+As now it should support relays, x-dimmers, and x4vr on ipx V4 et ipx V5, to be tested.
+
 This is heavily based on the hombridge plateform template it may let you control your ipx800 relays.
+
+
 
 It should be used in conjunction with the [developer documentation](https://developers.homebridge.io/). A full list of all supported service types, and their characteristics is available on this site.
 

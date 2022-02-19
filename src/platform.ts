@@ -1,19 +1,27 @@
 import { API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, Service, Characteristic } from 'homebridge';
 
 import { PLATFORM_NAME, PLUGIN_NAME } from './settings';
-import { ExamplePlatformAccessory } from './platformAccessory';
+import { IPXRelayAccessory } from './device/relayAccessory';
+import { IPXDimmerAccessory } from './device/dimmerAccessory';
+import { IPXV4 } from './ipx/ipxV4';
+import { IPXV5 } from './ipx/ipxV5';
+import { IpxAPI } from './ipx/api';
+//import { rmdir } from 'fs';
 
 /**
  * HomebridgePlatform
  * This class is the main constructor for your plugin, this is where you should
  * parse the user config and discover/register accessories with Homebridge.
  */
-export class ExampleHomebridgePlatform implements DynamicPlatformPlugin {
+export class IPXPlatform implements DynamicPlatformPlugin {
   public readonly Service: typeof Service = this.api.hap.Service;
   public readonly Characteristic: typeof Characteristic = this.api.hap.Characteristic;
 
   // this is used to track restored cached accessories
   public readonly accessories: PlatformAccessory[] = [];
+
+  public readonly ipxVersion: string;
+  public readonly ipxApi: IpxAPI;
 
   constructor(
     public readonly log: Logger,
@@ -21,17 +29,42 @@ export class ExampleHomebridgePlatform implements DynamicPlatformPlugin {
     public readonly api: API,
   ) {
     this.config = config;
+    this.ipxVersion = this.config['api']?.version;
     this.log.debug('Finished initializing platform:', this.config.name);
+    this.ipxApi = ((this.ipxVersion === 'v5') ? new IPXV5: new IPXV4);
 
-    // When this event is fired it means Homebridge has restored all cached accessories from disk.
-    // Dynamic Platform plugins should only register new accessories after this event was fired,
-    // in order to ensure they weren't added to homebridge already. This event can also be used
-    // to start discovery of new accessories.
     this.api.on('didFinishLaunching', () => {
       log.debug('Executed didFinishLaunching callback');
       // run the method to discover / register your devices as accessories
       this.discoverDevices();
     });
+  }
+
+
+  /**
+   * This is an example method showing how to register discovered accessories.
+   * Accessories must only be registered once, previously created accessories
+   * must not be registered again to prevent "duplicate UUID" errors.
+   */
+  discoverDevices() {
+
+    (this.config['relays'] || [])
+      .filter(this.validNameAndIndex)
+      .map(d => this.findOrCreate(d, a => new IPXRelayAccessory(this, a, this.ipxApi)));
+
+
+    (this.config['dimmers'] || [])
+      .filter(this.validNameAndIndex)
+      .filter(this.validDimmer)
+      .map(d => this.findOrCreate(d, a => new IPXDimmerAccessory(this, a, this.ipxApi)));
+
+    (this.config['inputs'] || [])
+      .filter(this.validNameAndIndex);
+    //.map(d => this.findOrCreate(d, a => new IPXInputsAccessory(this, a, this.ipxApi)));
+
+    (this.config['xthls'] || [])
+      .filter(this.validNameAndIndex);
+    //.map(d => this.findOrCreate(d, a => new IPXInputsAccessory(this, a, this.ipxApi)));
   }
 
   /**
@@ -45,66 +78,40 @@ export class ExampleHomebridgePlatform implements DynamicPlatformPlugin {
     this.accessories.push(accessory);
   }
 
-  /**
-   * This is an example method showing how to register discovered accessories.
-   * Accessories must only be registered once, previously created accessories
-   * must not be registered again to prevent "duplicate UUID" errors.
-   */
-  discoverDevices() {
+  validNameAndIndex(device){
+    if ((!device.displayName) || (!device.index)) {
+      this.log.error('missing name or index in configuration for: ' + device);
+      return false;
+    }
+    return true;
+  }
 
-    // EXAMPLE ONLY
-    // A real plugin you would discover accessories from the local network, cloud services
-    // or a user-defined array in the platform config.
-    const devices = this.config['relays'] || [];
+  validDimmer(dimmer){
+    if ((!dimmer.brightIndex) && (this.ipxVersion === 'v5')) {
+      this.log.error('missing ana index number for dimmer: ' + dimmer.displayName);
+      return false;
+    }
+    return true;
+  }
 
-    // loop over the discovered devices and register each one if it has not already been registered
-    devices.forEach((device, i) => {
-      // generate a unique id for the accessory this should be generated from
-      // something globally unique, but constant, for example, the device serial
-      // number or MAC address
-      const index = i + 1;
-      device.uuid = device.displayName.replace(/\s/g, '') + '-' + index;
-      device.index = index;
-      const uuid = this.api.hap.uuid.generate(device.uuid);
+  findOrCreate(
+    device,
+    constructor: (accessory: PlatformAccessory) => void,
+  ) {
+    device.uuid = device.displayName.replace(/\s/g, '') + '-' + device.index;
+    const uuid = this.api.hap.uuid.generate(device.uuid);
 
-      // see if an accessory with the same uuid has already been registered and restored from
-      // the cached devices we stored in the `configureAccessory` method above
-      const existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid);
+    const existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid);
 
-      if (existingAccessory) {
-        // the accessory already exists
-        this.log.info('Restoring existing accessory from cache:', existingAccessory.displayName);
-
-        // if you need to update the accessory.context then you should run `api.updatePlatformAccessories`. eg.:
-        // existingAccessory.context.device = device;
-        // this.api.updatePlatformAccessories([existingAccessory]);
-
-        // create the accessory handler for the restored accessory
-        // this is imported from `platformAccessory.ts`
-        new ExamplePlatformAccessory(this, existingAccessory);
-
-        // it is possible to remove platform accessories at any time using `api.unregisterPlatformAccessories`, eg.:
-        // remove platform accessories when no longer present
-        // this.api.unregisterPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [existingAccessory]);
-        // this.log.info('Removing existing accessory from cache:', existingAccessory.displayName);
-      } else {
-        // the accessory does not yet exist, so we need to create it
-        this.log.info('Adding new accessory:', device.displayName);
-
-        // create a new accessory
-        const accessory = new this.api.platformAccessory(device.displayName, uuid);
-
-        // store a copy of the device object in the `accessory.context`
-        // the `context` property can be used to store any data about the accessory you may need
-        accessory.context.device = device;
-
-        // create the accessory handler for the newly create accessory
-        // this is imported from `platformAccessory.ts`
-        new ExamplePlatformAccessory(this, accessory);
-
-        // link the accessory to your platform
-        this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
-      }
-    });
+    if (existingAccessory) {
+      this.log.info('Restoring existing accessory from cache:', existingAccessory.displayName);
+      constructor(existingAccessory);
+    } else {
+      this.log.info('Adding new accessory:', device.displayName);
+      const accessory = new this.api.platformAccessory(device.displayName, uuid);
+      accessory.context.device = device;
+      constructor(accessory);
+      this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
+    }
   }
 }

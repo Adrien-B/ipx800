@@ -3,50 +3,211 @@
   "pluginType": "platform",
   "singular": true,
   "schema": {
-    "url": {
-      "title": "ipx url",
-      "description": "ipx url with key",
-      "type": "string",
-      "required": true
+    "api": {
+      "type": "object",
+      "title": "Ipx Api configuration",
+      "properties": {
+        "ip": {
+          "title": "ipx ip",
+          "_description": "ipx ip",
+          "default": "192.168.",
+          "type": "string"
+        },
+        "key": {
+          "title": "ipx api key",
+          "_description": "ipx api key",
+          "type": "string"
+        },
+        "version": {
+          "title": "ipx version",
+          "_description": "ipx version, only v4 or v5 are supported",
+          "type": "string",
+            "default": "v4",
+            "oneOf": [
+              { "title": "V4", "enum": ["v4"] },
+              { "title": "V5", "enum": ["v5"] }
+            ],
+            "required": true
+        }
+      }    
     },
     "relays": {
       "type": "array",
-      "description": "Relays must be in added in the same order as they are wired, without any unused relay",
       "items": {
         "title": "Relays",
         "type": "object",
         "properties": {
           "displayName": {
-            "title": "display name",
-            "type": "string",
-            "required": true
+            "title": "displayed name (fr: nom affiché)",
+            "type": "string"
           },
           "type": {
             "title": "type",
             "type": "string",
-            "required": true,
             "default": "light",
             "oneOf": [
-              { "title": "light", "enum": ["light"] },
-              { "title": "outlet", "enum": ["outlet"] },
-              { "title": "fan", "enum": ["fan"] }
-            ]
+              { "title": "light (fr:lumière)", "enum": ["light"] },
+              { "title": "outlet (fr:prise)", "enum": ["outlet"] },
+              { "title": "fan (fr:ventilation)", "enum": ["fan"] },
+              { "title": "valve", "enum": ["valve"]}
+            ],
+            "required": true
+          },
+          "index": {
+            "title": "index",
+            "description": "api number on V4, io index on V5",
+            "type": "number"
+          }
+        } 
+      }
+    },
+    "dimmers": {
+      "type": "array",
+      "items": {
+        "title": "Dimmable devices (xdimmer-x4vr)",
+        "type": "object",
+        "properties": {
+          "displayName": {
+            "title": "displayed name (fr: nom affiché)",
+            "type": "string"
+          },
+          "type": {
+            "title": "type",
+            "type": "string",
+            "default": "light",
+            "oneOf": [
+              { "title": "light (fr:lumière)", "enum": ["light"] },
+              { "title": "fan (fr:ventilation)", "enum": ["fan"] },
+              { "title": "window covering (fr:volet/rideau)", "enum": ["covering"] }
+            ],
+            "required": true
+          },
+          "index": {
+            "title": "index",
+            "description": "api number on V4, io index on V5",
+            "type": "number"
+          },
+          "brightIndex": {
+            "condition": {
+              "functionBody": "return model.api.version && model.api.version!=='v4'"
+            },
+            "title": "ana index",
+            "description": "ana index on V5, to set brightness level",
+            "type": "number"
+          }
+        } 
+      }
+     
+    },
+    "xthls": {
+      "type": "array",
+      "items": {
+        "title": "X-thl sensors",
+        "type": "object",
+        "properties": {
+          "displayName": {
+            "title": "displayed name (fr: nom affiché)",
+            "type": "string"
+          },
+          "type": {
+            "title": "type",
+            "type": "string",
+            "default": "temperature",
+            "oneOf": [
+              { "title": "humidity sensor (fr:capteur d’humidity)", "enum": ["humidity"] },
+              { "title": "light sensor (fr:capteur de luminosité)", "enum": ["light"] },
+              { "title": "temperature sensor (fr:thermomètre)", "enum": ["temperature"] }      
+            ],
+            "required": true
+          },
+          "index": {
+            "title": "index",
+            "description": "api number on V4, io index on V5",
+            "type": "number"
+          }
+        } 
+      }
+    },
+    "inputs": {
+      "type": "array",
+      "items": {
+        "title": "Inputs or Sensors",
+        "type": "object",
+        "properties": {
+          "displayName": {
+            "title": "displayed name",
+            "type": "string"
+          },
+          "type": {
+            "title": "type",
+            "type": "string",
+            "default": "motion",
+            "required": true
+          },
+          "index": {
+            "title": "index",
+            "description": "api number on V4, io index on V5",
+            "type": "number"
           }
         } 
       }
     }
   },
   "layout": [
-    "url",
     {
+      "expandable": true,
+      "expanded": true,
+      "key": "api",
+      "type": "array",
+      "items" : [ "api.ip", "api.key", {"key": "api.version"}]
+    },
+    {
+      "expandable": true,
+      "expanded": false,
       "key": "relays",
       "type": "array",
       "orderable": true,
       "buttonText": "Add relay",
       "items": [
-        "relays[].displayName",
-        "relays[].type"
+        "relays[].displayName",  "relays[].type",  "relays[].index"
+      ]
+    },
+    {
+      "expandable": true,
+      "expanded": false,
+      "key": "dimmers",
+      "type": "array",
+      "orderable": true,
+      "buttonText": "Add relay",
+      "items": [
+        "dimmers[].displayName",  "dimmers[].type",  "dimmers[].index", "dimmers[].brightIndex"
+      ]
+    },
+    {
+      "expandable": true,
+      "expanded": false,
+      "key": "inputs",
+      "type": "array",
+      "orderable": true,
+      "buttonText": "Add inputs/sensors",
+      "items": [
+        "inputs[].displayName",
+        "inputs[].type",
+        "inputs[].index"
+      ]
+    },
+    {
+      "expandable": true,
+      "expanded": false,
+      "key": "xthls",
+      "type": "array",
+      "orderable": true,
+      "buttonText": "Add xthl sensors",
+      "items": [
+        "xthls[].displayName",
+        "xthls[].type",
+        "xthls[].index"
       ]
     }
-  ]
+  ]  
 }
