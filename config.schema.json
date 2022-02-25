@@ -5,28 +5,18 @@
   "schema": {
     "api": {
       "type": "object",
-      "title": "Ipx Api configuration",
       "properties": {
         "ip": {
-          "title": "ipx ip",
-          "_description": "ipx ip",
-          "default": "192.168.",
-          "type": "string"
+          "type": "string",
+          "default": "192.168."
         },
         "key": {
-          "title": "ipx api key",
-          "_description": "ipx api key",
           "type": "string"
         },
         "version": {
-          "title": "ipx version",
-          "_description": "ipx version, only v4 or v5 are supported",
           "type": "string",
             "default": "v4",
-            "oneOf": [
-              { "title": "V4", "enum": ["v4"] },
-              { "title": "V5", "enum": ["v5"] }
-            ],
+            "enum": ["v4", "v5"],
             "required": true
         }
       }    
@@ -34,15 +24,12 @@
     "relays": {
       "type": "array",
       "items": {
-        "title": "Relays",
         "type": "object",
         "properties": {
           "displayName": {
-            "title": "displayed name (fr: nom affiché)",
             "type": "string"
           },
           "type": {
-            "title": "type",
             "type": "string",
             "default": "light",
             "oneOf": [
@@ -54,8 +41,6 @@
             "required": true
           },
           "index": {
-            "title": "index",
-            "description": "api number on V4, io index on V5",
             "type": "number"
           }
         } 
@@ -64,15 +49,12 @@
     "dimmers": {
       "type": "array",
       "items": {
-        "title": "Dimmable devices (xdimmer-x4vr)",
         "type": "object",
         "properties": {
           "displayName": {
-            "title": "displayed name (fr: nom affiché)",
             "type": "string"
           },
           "type": {
-            "title": "type",
             "type": "string",
             "default": "light",
             "oneOf": [
@@ -83,34 +65,27 @@
             "required": true
           },
           "index": {
-            "title": "index",
-            "description": "api number on V4, io index on V5",
             "type": "number"
           },
-          "brightIndex": {
+          "anaIndex": {
             "condition": {
               "functionBody": "return model.api.version && model.api.version!=='v4'"
             },
-            "title": "ana index",
-            "description": "ana index on V5, to set brightness level",
             "type": "number"
           }
         } 
       }
      
     },
-    "xthls": {
+    "analogInputs": {
       "type": "array",
       "items": {
-        "title": "X-thl sensors",
         "type": "object",
         "properties": {
           "displayName": {
-            "title": "displayed name (fr: nom affiché)",
             "type": "string"
           },
           "type": {
-            "title": "type",
             "type": "string",
             "default": "temperature",
             "oneOf": [
@@ -121,8 +96,6 @@
             "required": true
           },
           "index": {
-            "title": "index",
-            "description": "api number on V4, io index on V5",
             "type": "number"
           }
         } 
@@ -131,22 +104,21 @@
     "inputs": {
       "type": "array",
       "items": {
-        "title": "Inputs or Sensors",
         "type": "object",
         "properties": {
           "displayName": {
-            "title": "displayed name",
             "type": "string"
           },
           "type": {
-            "title": "type",
             "type": "string",
-            "default": "motion",
+            "default": "switch",
+            "oneOf": [
+              { "title": "mouvement (fr:détecteur de mouvement)", "enum": ["motion"] },
+              { "title": "switch (fr:interrupteur)", "enum": ["switch"] }   
+            ],
             "required": true
           },
           "index": {
-            "title": "index",
-            "description": "api number on V4, io index on V5",
             "type": "number"
           }
         } 
@@ -158,8 +130,13 @@
       "expandable": true,
       "expanded": true,
       "key": "api",
+      "title": "Ipx Api configuration",
       "type": "array",
-      "items" : [ "api.ip", "api.key", {"key": "api.version"}]
+      "items" : [ 
+        {"key": "api.ip", "title": "ipx ip"}, 
+        {"key": "api.key", "title": "ipx api key"},
+        {"key": "api.version", "title": "ipx version"}
+      ]
     },
     {
       "expandable": true,
@@ -169,7 +146,9 @@
       "orderable": true,
       "buttonText": "Add relay",
       "items": [
-        "relays[].displayName",  "relays[].type",  "relays[].index"
+        {"key":"relays[].displayName", "title": "displayed name (fr: nom affiché)"},
+        {"key":"relays[].type"},
+        {"key":"relays[].index", "description": "api number on V4, io index on V5"}
       ]
     },
     {
@@ -180,7 +159,10 @@
       "orderable": true,
       "buttonText": "Add relay",
       "items": [
-        "dimmers[].displayName",  "dimmers[].type",  "dimmers[].index", "dimmers[].brightIndex"
+        {"key":"dimmers[].displayName", "title": "displayed name (fr: nom affiché)"},
+        {"key":"dimmers[].type"},
+        {"key":"dimmers[].index", "description": "api number on V4, io index on V5"},
+        {"key":"dimmers[].anaIndex", "title": "ana index", "description": "ana index on V5, to set brightness level"}
       ]
     },
     {
@@ -191,22 +173,22 @@
       "orderable": true,
       "buttonText": "Add inputs/sensors",
       "items": [
-        "inputs[].displayName",
-        "inputs[].type",
-        "inputs[].index"
+        {"key":"inputs[].displayName", "title": "displayed name (fr: nom affiché)"},
+        {"key":"inputs[].type"},
+        {"key":"inputs[].index", "description": "api number on V4, io index on V5"}
       ]
     },
     {
       "expandable": true,
       "expanded": false,
-      "key": "xthls",
+      "key": "analogInputs",
       "type": "array",
       "orderable": true,
-      "buttonText": "Add xthl sensors",
+      "buttonText": "Add xthl and analog sensors",
       "items": [
-        "xthls[].displayName",
-        "xthls[].type",
-        "xthls[].index"
+        {"key":"analogInputs[].displayName", "title": "displayed name (fr: nom affiché)"},
+        {"key":"analogInputs[].type"},
+        {"key":"analogInputs[].index", "description": "api number on V4, io index on V5"}
       ]
     }
   ]  

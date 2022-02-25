@@ -1,20 +1,17 @@
-import { Service, PlatformAccessory, CharacteristicValue, APIEvent } from 'homebridge';
+import { Service, PlatformAccessory } from 'homebridge';
 import { IPXPlatform } from '../platform';
-import axios from 'axios';
-import { IpxAPI } from '../ipx/api';
+import { IpxApiCaller } from '../ipx/api';
 
-/**
- * Platform Accessory
- * An instance of this class is created for each accessory your platform registers
- * Each accessory may expose multiple services of different service types.
- */
-export class IPXDimmerAccessory {
-  private service: Service;
+
+
+export class RelayHandler {
+  public readonly index: number = this.accessory.context.device.index;
+  private readonly service: Service;
 
   constructor(
     private readonly platform: IPXPlatform,
     private readonly accessory: PlatformAccessory,
-    private readonly ipx: IpxAPI,
+    private readonly ipx: IpxApiCaller,
   ) {
     // set accessory information
     this.accessory.getService(this.platform.Service.AccessoryInformation)!
@@ -22,13 +19,16 @@ export class IPXDimmerAccessory {
       .setCharacteristic(this.platform.Characteristic.Model, 'IPX-800');
 
     switch(accessory.context.device.type) {
-      case 'covering': {
-        this.service = this.accessory.getService(this.platform.Service.WindowCovering) ||
-         this.accessory.addService(this.platform.Service.WindowCovering);
+      case 'outlet': {
+        this.service = this.accessory.getService(this.platform.Service.Outlet) || this.accessory.addService(this.platform.Service.Outlet);
         break;
       }
       case 'fan': {
         this.service = this.accessory.getService(this.platform.Service.Fan) || this.accessory.addService(this.platform.Service.Fan);
+        break;
+      }
+      case 'valve': {
+        this.service = this.accessory.getService(this.platform.Service.Valve) || this.accessory.addService(this.platform.Service.Valve);
         break;
       }
       default: { //lightbulb
@@ -37,10 +37,10 @@ export class IPXDimmerAccessory {
       }
     }
     this.service.setCharacteristic(this.platform.Characteristic.Name, accessory.context.device.displayName);
-    this.service.setCharacteristic(this.platform.Characteristic.Name, accessory.context.device.displayName);
     this.service.getCharacteristic(this.platform.Characteristic.On).onSet((v) => ipx.setOn(v, this.platform, this.accessory));
-    this.service.getCharacteristic(this.platform.Characteristic.Brightness).onSet(
-      (v) => ipx.setBrightness(v, this.platform, this.accessory),
-    );
+  }
+
+  public updateIO(state: boolean){
+    this.service.updateCharacteristic(this.platform.Characteristic.On, state);
   }
 }

@@ -1,9 +1,18 @@
 import { PlatformAccessory, CharacteristicValue, APIEvent } from 'homebridge';
 import { IPXPlatform } from '../platform';
-import { IpxAPI } from './api';
+import { IpxApiCaller } from './api';
 import axios from 'axios';
 
-export class IPXV4 implements IpxAPI {
+export class IPXV4 implements IpxApiCaller {
+
+  public getAnaStateByNumer(platform: IPXPlatform): Promise<Map<number, number>> {
+    throw new Error('Method not implemented.');
+  }
+
+  async getStateByNumber(platform: IPXPlatform): Promise<Map<number, boolean>> {
+    throw new Error('Method not implemented.');
+  }
+
   async setOn(value: CharacteristicValue, platform: IPXPlatform, accessory: PlatformAccessory) {
     const api = platform.config['api'];
     platform.log.debug('Set Characteristic On ->', value);
