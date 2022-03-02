@@ -5,6 +5,7 @@ import { IPXPlatform } from '../platform';
 export class InputHandler {
   public readonly index: number = this.accessory.context.device.index;
   private readonly service: Service;
+  private readonly characteristic;
 
   constructor(
     private readonly platform: IPXPlatform,
@@ -19,17 +20,25 @@ export class InputHandler {
       case 'motion': {
         this.service = this.accessory.getService(this.platform.Service.MotionSensor)
          || this.accessory.addService(this.platform.Service.MotionSensor);
+        this.characteristic = this.platform.Characteristic.MotionDetected;
+        break;
+      }
+      case 'switch' : {
+        this.service = this.accessory.getService(this.platform.Service.Switch)
+         ||this.accessory.addService(this.platform.Service.Switch);
+        this.characteristic = this.platform.Characteristic.On;
         break;
       }
       default: {
-        this.service = this.accessory.getService(this.platform.Service.Switch)
-         ||this.accessory.addService(this.platform.Service.Switch);
+        this.service = this.accessory.getService(this.platform.Service.ContactSensor)
+         ||this.accessory.addService(this.platform.Service.ContactSensor);
+        this.characteristic = this.platform.Characteristic.ContactSensorState;
       }
     }
     this.service.setCharacteristic(this.platform.Characteristic.Name, accessory.context.device.displayName);
   }
 
   public updateIO(state: boolean){
-    this.service.updateCharacteristic(this.platform.Characteristic.On, state);
+    this.service.updateCharacteristic(this.characteristic, state);
   }
 }

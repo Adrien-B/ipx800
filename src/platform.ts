@@ -4,6 +4,7 @@ import { PLATFORM_NAME, PLUGIN_NAME } from './settings';
 import { RelayHandler } from './device/relay';
 import { DimmerHandler } from './device/dimmer';
 import { InputHandler } from './device/input';
+import { AnalogInputHandler } from './device/analogInput';
 import { IPXV4 } from './ipx/ipxV4';
 import { IPXV5 } from './ipx/ipxV5';
 import { IpxApiCaller } from './ipx/api';
@@ -12,7 +13,7 @@ import {Relays} from './config/relays.d';
 import {Dimmers} from './config/dimmers.d';
 import {Inputs} from './config/inputs.d';
 import {AnalogInputs} from './config/analogInputs.d';
-import {Device, DeviceHandler} from './config/deviceConfig';
+import {Device, IODeviceHandler, AnaDeviceHandler} from './config/deviceConfig';
 
 
 /**
@@ -30,8 +31,8 @@ export class IPXPlatform implements DynamicPlatformPlugin {
   public readonly configApi = this.config.api as Api;
   public readonly configRelays = this.config.relays || [] as Array<Relays>;
   public readonly configDimmers = this.config.dimmers || [] as Array<Dimmers>;
-  public readonly configInputs = this.config.dimmers || [] as Array<Inputs>;
-  public readonly configAnaInputs= this.config.dimmers || [] as Array<AnalogInputs>;
+  public readonly configInputs = this.config.inputs || [] as Array<Inputs>;
+  public readonly configAnaInputs= this.config.analogInputs || [] as Array<AnalogInputs>;
 
   private pullError = false;
   readonly ipxVersion: string = this.config.api.version;
@@ -69,50 +70,76 @@ export class IPXPlatform implements DynamicPlatformPlugin {
 
   discoverDevices() {
     const relays = this.configRelays
-      .filter(d => this.validNameAndIndex(d))
+      .filter(d => this.hasName(d))
+      .filter(d => this.hasIndex(d))
       .map(d => this.findOrCreate(d, (da) => new RelayHandler(this, da, this.ipxApiCaller)));
 
     const dimmers = this.configDimmers
-      .filter(d => this.validNameAndIndex(d))
-      .filter(d => this.validDimmer(d))
+      .filter(d => this.hasName(d))
+      .filter(d => this.hasAnaIndex(d))
       .map(d => this.findOrCreate(d, (da) => new DimmerHandler(this, da, this.ipxApiCaller)));
 
     const inputs = this.configInputs
-      .filter(d => this.validNameAndIndex(d))
+      .filter(d => this.hasName(d))
+      .filter(d => this.hasIndex(d))
       .map(d => this.findOrCreate(d, (da) => new InputHandler(this, da)));
 
-    /*
-    const xthls = (this.config['analogInputs'] || [])
-      .filter(this.validNameAndIndex);
-    //.map(d => this.findOrCreate(d, a => new IPXInputsAccessory(this, a, this.ipxApiCaller)));*/
+    const anaInputs = this.configAnaInputs
+      .filter(d => this.hasName(d))
+      .filter(d => this.hasIndex(d))
+      .map(d => this.findOrCreate(d, da => new AnalogInputHandler(this, da)));
 
-    const devices : Array<DeviceHandler> = relays.concat(dimmers, inputs);
-    //.concat(xthls)
+    const ioDevices : Array<IODeviceHandler> = relays.concat(dimmers, inputs).filter(d => d.index);
+    const anaDevices : Array<AnaDeviceHandler> = dimmers.concat(anaInputs);
 
     setInterval( () => {
       this.ipxApiCaller.getStateByNumber(this)
-        .then(stateByIndex => Promise.all(devices.map(d => d.updateIO(stateByIndex[d.index]))))
+        .then(stateByIndex => Promise.all(ioDevices.map(d => d.updateIO(stateByIndex[d.index]))))
         .catch(err => {
           if (!this.pullError) {
             this.log.error('could not update input/output devices state', err);
-            this.pullError = true;
+            // this.pullError = true;
           }
         });
-    }, 30000);
+    }, 3000);
+
+    setInterval( () => {
+      this.ipxApiCaller.getAnaPositionByNumer(this)
+        .then(valueByIndex => {
+          Promise.all(anaDevices.map(d => {
+            const anaIndex = d.anaIndex || d.index;
+            d.updateAnaValue(valueByIndex[anaIndex]);
+          }));
+        })
+        .catch(err => {
+          if (!this.pullError) {
+            this.log.error('could not update input/output devices state', err);
+            // this.pullError = true;
+          }
+        });
+    }, 4550);
   }
 
 
-  validNameAndIndex(device: Device){
-    if ((!device.displayName) || (!device.index)) {
-      this.log.error('missing name or index in configuration for: ' + device);
+  hasName(device: Device){
+    if ((!device.displayName)) {
+      this.log.error('missing name in configuration for: ' + JSON.stringify(device));
       return false;
     }
     return true;
   }
 
-  validDimmer(dimmer : Dimmers):boolean {
-    if ((!dimmer.anaIndex) && (this.ipxVersion === 'v5')) {
-      this.log.error('missing ana index number for dimmer: ' + dimmer.displayName);
+  hasIndex(device: Device){
+    if ((!device.index)) {
+      this.log.error('missing name in configuration for: ' + JSON.stringify(device));
+      return false;
+    }
+    return true;
+  }
+
+  hasAnaIndex(dimmer : Dimmers):boolean {
+    if (((!dimmer.anaIndex) && (this.ipxVersion === 'v5'))) {
+      this.log.error('missing anaIndex number for dimmer: ' + JSON.stringify(dimmer));
       return false;
     }
     return true;
@@ -120,8 +147,8 @@ export class IPXPlatform implements DynamicPlatformPlugin {
 
   findOrCreate(
     device: Device,
-    builder: (device: PlatformAccessory) => DeviceHandler,
-  ):DeviceHandler {
+    builder: (device: PlatformAccessory) => IODeviceHandler | AnaDeviceHandler,
+  ):IODeviceHandler | AnaDeviceHandler {
     const uuidSeed = device.displayName.replace(/\s/g, '') + '-' + device.index;
     const uuid = this.api.hap.uuid.generate(uuidSeed);
 

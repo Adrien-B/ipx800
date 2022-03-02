@@ -36,6 +36,8 @@
               { "title": "light (fr:lumière)", "enum": ["light"] },
               { "title": "outlet (fr:prise)", "enum": ["outlet"] },
               { "title": "fan (fr:ventilation)", "enum": ["fan"] },
+              { "title": "switch (fr:interrupteur)", "enum": ["switch"] },
+              { "title": "button (fr:poussoir)", "enum": ["bswitch"] },  
               { "title": "valve", "enum": ["valve"]}
             ],
             "required": true
@@ -75,7 +77,6 @@
           }
         } 
       }
-     
     },
     "analogInputs": {
       "type": "array",
@@ -113,8 +114,9 @@
             "type": "string",
             "default": "switch",
             "oneOf": [
-              { "title": "mouvement (fr:détecteur de mouvement)", "enum": ["motion"] },
-              { "title": "switch (fr:interrupteur)", "enum": ["switch"] }   
+              { "title": "mouvement sensor (fr:détecteur de mouvement)", "enum": ["motion"] },
+              { "title": "switch (fr:interrupteur)", "enum": ["switch"] }   ,
+              { "title": "contact sensor (fr:contacteur)", "enum": ["contact"] }   
             ],
             "required": true
           },
@@ -142,6 +144,7 @@
       "expandable": true,
       "expanded": false,
       "key": "relays",
+      "title": "relays and on/off devices",
       "type": "array",
       "orderable": true,
       "buttonText": "Add relay",
@@ -157,12 +160,12 @@
       "key": "dimmers",
       "type": "array",
       "orderable": true,
-      "buttonText": "Add relay",
+      "buttonText": "Add dimmer",
       "items": [
         {"key":"dimmers[].displayName", "title": "displayed name (fr: nom affiché)"},
         {"key":"dimmers[].type"},
         {"key":"dimmers[].index", "description": "api number on V4, io index on V5"},
-        {"key":"dimmers[].anaIndex", "title": "ana index", "description": "ana index on V5, to set brightness level"}
+        {"key":"dimmers[].anaIndex", "title": "ana/consigne index", "description": "consigne index on V5, to get brightness level"}
       ]
     },
     {

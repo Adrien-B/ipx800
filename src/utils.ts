@@ -2,7 +2,7 @@
 export default class MapUtils {
 
   static toBoolByNum<T>(data: Array<T>, key: string, value: string):Map<number, boolean> {
-    return data.reduce((map, jsItem) => {
+    return (data || []).reduce((map, jsItem) => {
       map[jsItem[key] as number] = jsItem[value] as boolean;
       return map;
     }
@@ -11,7 +11,7 @@ export default class MapUtils {
 
 
   static toStringByNum<T>(data: Array<T>, key: string, value: string):Map<number, number> {
-    return data.reduce((map, jsItem) => {
+    return (data || []).reduce((map, jsItem) => {
       map[jsItem[key] as number] = jsItem[value] as number;
       return map;
     }

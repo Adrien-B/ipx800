@@ -1,57 +1,110 @@
 
 <p align="center">
 
-<img src="https://github.com/homebridge/branding/raw/master/logos/homebridge-wordmark-logo-vertical.png" width="150">
+<!-- <img src="https://github.com/homebridge/branding/raw/master/logos/homebridge-wordmark-logo-vertical.png" width="150"> -->
+<img src="http://sarakha63-domotique.fr/wp-content/uploads/2018/03/IPX_800_LE_CHOIX_2.jpg" width="250">
 
 </p>
 
 
-# Homebridge IPX800 Platform Plugin
+# Homebridge IPX800 Plugin
 
 This plugin brings support of IPX800 to homekit.
-As now it should support relays, x-dimmers, and x4vr on ipx V4 et ipx V5, to be tested.
+As now it support different devices :
+1. ipx v5
+    * relays (ipx, x8r)
+    * dimmers (x-dimmer, x4vr)
+    * digital inputs (ipx, x24d, x8d, is312)
+    * analog inputs (ipx, x-thl)
+2. ipx v4
+    * relays
+
 
 This is heavily based on the hombridge plateform template it may let you control your ipx800 relays.
 
 
 
-It should be used in conjunction with the [developer documentation](https://developers.homebridge.io/). A full list of all supported service types, and their characteristics is available on this site.
-
-## Clone As Template
-
-Click the link below to create a new GitHub Repository using this template, or click the *Use This Template* button above.
-
 ## Install Development Dependencies
 
-Using a terminal, navigate to the project folder and run this command to install the development dependencies:
+Using a terminal on the computer running homebridge:
 
 ```
+#clone plugin
+git clone https://github.com/Adrien-B/ipx800.git
+
+
+# install dependency
+cd ipx800
 npm install
 sudo npm install -g  typescript rimraf
-```
 
-## Build Plugin
+# build and link plugin
+npm run build 
+npm run link #or sudo npm run link
 
-TypeScript needs to be compiled into JavaScript before it can run. The following command will compile the contents of your [`src`](./src) directory and put the resulting code into the `dist` folder.
 
-```
-npm run build
-```
-
-## Link To Homebridge
-
-Run this command so your global install of Homebridge can discover the plugin in your development environment:
-
-```
-npm link
-```
-
-You can now start Homebridge, use the `-D` flag so you can see debug log messages in your plugin:
-
-```
+#(re)start homebridge if not done already
 homebridge -D
 ```
 
-## Congiure the plugin
 
-In homebridge add all the relay you want to use and the ipx url.
+## Configure the plugin
+
+In homebridge set the ipx api settings
+* ip
+* api-key
+* version
+
+See the following json snippet exemple: 
+```
+ "api": {
+                "ip": "*.*.*.*",
+                "key": "*",
+                "version": "v5"
+            },
+
+```
+
+Than add all your devices (relays, dimmer, inputs).
+See the following json snippet exemple: 
+```
+            "relays": [
+                {
+                    "displayName": "bedroom",
+                    "type": "light",
+                    "index": 65542
+                }
+            ],
+            "dimmers": [
+                {
+                    "displayName": "kitchen",
+                    "type": "light",
+                    "index": 65842,
+                    "anaIndex": 196642
+                },
+                {
+                    "displayName": "corridor",
+                    "type": "covering",
+                    "anaIndex": 196642
+                }
+            ],
+            "analogInputs": [
+                {
+                    "displayName": "garden",
+                    "type": "light",
+                    "index": 262142
+                },
+                {
+                    "displayName": "cellar",
+                    "type": "temperature",
+                    "index": 262142
+                }
+            ],
+            "inputs": [
+                {
+                    "displayName": "living room",
+                    "type": "switch",
+                    "index": 42
+                }
+            ],
+```

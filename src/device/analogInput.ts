@@ -1,6 +1,5 @@
 import { Service, PlatformAccessory } from 'homebridge';
 import { IPXPlatform } from '../platform';
-import { IpxApiCaller } from '../ipx/api';
 
 
 export class AnalogInputHandler {
@@ -40,7 +39,10 @@ export class AnalogInputHandler {
     this.service.setCharacteristic(this.platform.Characteristic.Name, accessory.context.device.displayName);
   }
 
-  public updateAnaCharacteristic(state: number){
+  async updateAnaValue(state: number){
+    if (this.characteristic === this.platform.Characteristic.CurrentAmbientLightLevel) {
+      state = Math.max(state, 0.1);
+    }
     this.service.updateCharacteristic(this.characteristic, state);
   }
 }

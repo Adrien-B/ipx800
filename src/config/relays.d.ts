@@ -8,10 +8,12 @@
 export type LightFrLumiere = "light";
 export type OutletFrPrise = "outlet";
 export type FanFrVentilation = "fan";
+export type SwitchFrInterrupteur = "switch";
+export type ButtonFrPoussoir = "bswitch";
 export type Valve = "valve";
 export type Relays = {
   displayName: string;
-  type: (LightFrLumiere | OutletFrPrise | FanFrVentilation | Valve) & string;
+  type: (LightFrLumiere | OutletFrPrise | FanFrVentilation | SwitchFrInterrupteur | ButtonFrPoussoir | Valve) & string;
   index: number;
 
 };
