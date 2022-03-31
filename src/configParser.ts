@@ -4,7 +4,7 @@ import fs from 'fs';
 
 function parse(config:any, name: string){
   compile(config[name], name)
-    .then(x => x.replaceAll('?', '').replace('  [k: string]: unknown;', '').replace('[]', ''))
+    .then(x => x.split('?').join('').replace('  [k: string]: unknown;', '').replace('[]', ''))
     .then(data => fs.writeFileSync('src/config/' +name +'.d.ts', data));
 }
 
