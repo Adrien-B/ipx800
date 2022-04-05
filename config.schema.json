@@ -48,7 +48,7 @@
         } 
       }
     },
-    "dimmers": {
+    "graduals": {
       "type": "array",
       "items": {
         "type": "object",
@@ -62,6 +62,7 @@
             "oneOf": [
               { "title": "light (fr:lumière)", "enum": ["light"] },
               { "title": "fan (fr:ventilation)", "enum": ["fan"] },
+              { "title": "x4fp", "enum": ["x4fp"] },
               { "title": "window covering (fr:volet/rideau)", "enum": ["covering"] }
             ],
             "required": true
@@ -157,15 +158,15 @@
     {
       "expandable": true,
       "expanded": false,
-      "key": "dimmers",
+      "key": "graduals",
       "type": "array",
       "orderable": true,
-      "buttonText": "Add dimmer",
+      "buttonText": "Add graduals",
       "items": [
-        {"key":"dimmers[].displayName", "title": "displayed name (fr: nom affiché)"},
-        {"key":"dimmers[].type"},
-        {"key":"dimmers[].index", "description": "api number on V4, io index on V5"},
-        {"key":"dimmers[].anaIndex", "title": "ana/consigne index", "description": "consigne index on V5, to get brightness level"}
+        {"key":"graduals[].displayName", "title": "displayed name (fr: nom affiché)"},
+        {"key":"graduals[].type"},
+        {"key":"graduals[].index", "description": "api number on V4, io index on V5"},
+        {"key":"graduals[].anaIndex", "title": "ana/consigne index", "description": "consigne index on V5, to get brightness level"}
       ]
     },
     {

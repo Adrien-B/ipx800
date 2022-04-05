@@ -1,12 +1,12 @@
 import {Relays} from './relays.d';
-import {Dimmers} from './dimmers.d';
+import {Graduals} from './graduals.d';
 import {Inputs} from './inputs.d';
 import {AnalogInputs} from './analogInputs.d';
 import { RelayHandler } from '../device/relay';
-import { DimmerHandler } from '../device/dimmer';
+import { GradualHandler } from '../device/gradual';
 import { InputHandler } from '../device/input';
 import { AnalogInputHandler } from '../device/analogInput';
 
-export type Device = Relays |Inputs | AnalogInputs | Dimmers;
-export type IODeviceHandler = DimmerHandler | RelayHandler | InputHandler ;
-export type AnaDeviceHandler = DimmerHandler | AnalogInputHandler;
+export type Device = Relays |Inputs | AnalogInputs | Graduals;
+export type IODeviceHandler = GradualHandler | RelayHandler | InputHandler ;
+export type AnaDeviceHandler = GradualHandler | AnalogInputHandler;

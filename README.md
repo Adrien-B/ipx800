@@ -13,7 +13,7 @@ This plugin brings support of IPX800 to homekit.
 As now it support different devices :
 1. ipx v5
     * relays (ipx, x8r)
-    * dimmers (x-dimmer, x4vr)
+    * gradual (x-dimmer, x4vr)
     * digital inputs (ipx, x24d, x8d, is312)
     * analog inputs (ipx, x-thl)
 2. ipx v4
@@ -75,7 +75,7 @@ See the following json snippet exemple: 
                     "index": 65542
                 }
             ],
-            "dimmers": [
+            "graduals": [
                 {
                     "displayName": "kitchen",
                     "type": "light",

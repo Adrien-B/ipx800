@@ -2,7 +2,7 @@ import { API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, 
 
 import { PLATFORM_NAME, PLUGIN_NAME } from './settings';
 import { RelayHandler } from './device/relay';
-import { DimmerHandler } from './device/dimmer';
+import { GradualHandler } from './device/gradual';
 import { InputHandler } from './device/input';
 import { AnalogInputHandler } from './device/analogInput';
 import { IPXV4 } from './ipx/ipxV4';
@@ -10,7 +10,7 @@ import { IPXV5 } from './ipx/ipxV5';
 import { IpxApiCaller } from './ipx/api';
 import {Api} from './config/api.d';
 import {Relays} from './config/relays.d';
-import {Dimmers} from './config/dimmers.d';
+import {Graduals} from './config/graduals.d';
 import {Inputs} from './config/inputs.d';
 import {AnalogInputs} from './config/analogInputs.d';
 import {Device, IODeviceHandler, AnaDeviceHandler} from './config/deviceConfig';
@@ -30,7 +30,7 @@ export class IPXPlatform implements DynamicPlatformPlugin {
 
   public readonly configApi = this.config.api as Api;
   public readonly configRelays = this.config.relays || [] as Array<Relays>;
-  public readonly configDimmers = this.config.dimmers || [] as Array<Dimmers>;
+  public readonly configGraduals = this.config.graduals || [] as Array<Graduals>;
   public readonly configInputs = this.config.inputs || [] as Array<Inputs>;
   public readonly configAnaInputs= this.config.analogInputs || [] as Array<AnalogInputs>;
 
@@ -74,10 +74,10 @@ export class IPXPlatform implements DynamicPlatformPlugin {
       .filter(d => this.hasIndex(d))
       .map(d => this.findOrCreate(d, (da) => new RelayHandler(this, da, this.ipxApiCaller)));
 
-    const dimmers = this.configDimmers
+    const graduals = this.configGraduals
       .filter(d => this.hasName(d))
       .filter(d => this.hasAnaIndex(d))
-      .map(d => this.findOrCreate(d, (da) => new DimmerHandler(this, da, this.ipxApiCaller)));
+      .map(d => this.findOrCreate(d, (da) => new GradualHandler(this, da, this.ipxApiCaller)));
 
     const inputs = this.configInputs
       .filter(d => this.hasName(d))
@@ -89,8 +89,8 @@ export class IPXPlatform implements DynamicPlatformPlugin {
       .filter(d => this.hasIndex(d))
       .map(d => this.findOrCreate(d, da => new AnalogInputHandler(this, da)));
 
-    const ioDevices : Array<IODeviceHandler> = relays.concat(dimmers, inputs).filter(d => d.index);
-    const anaDevices : Array<AnaDeviceHandler> = dimmers.concat(anaInputs);
+    const ioDevices : Array<IODeviceHandler> = relays.concat(graduals, inputs).filter(d => d.index);
+    const anaDevices : Array<AnaDeviceHandler> = graduals.concat(anaInputs);
 
     setInterval( () => {
       this.ipxApiCaller.getStateByNumber(this)
@@ -137,7 +137,7 @@ export class IPXPlatform implements DynamicPlatformPlugin {
     return true;
   }
 
-  hasAnaIndex(dimmer : Dimmers):boolean {
+  hasAnaIndex(dimmer : Graduals):boolean {
     if (((!dimmer.anaIndex) && (this.ipxVersion === 'v5'))) {
       this.log.error('missing anaIndex number for dimmer: ' + JSON.stringify(dimmer));
       return false;

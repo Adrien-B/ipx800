@@ -4,7 +4,7 @@ import axios from 'axios';
 import { IpxApiCaller } from '../ipx/api';
 
 
-export class DimmerHandler {
+export class GradualHandler {
   public readonly index: number = this.accessory.context.device.index;
   public readonly anaIndex: number = this.accessory.context.device.anaIndex;
   private service: Service;
@@ -37,7 +37,17 @@ export class DimmerHandler {
         this.service.setCharacteristic(this.platform.Characteristic.Name, accessory.context.device.displayName);
         this.service.getCharacteristic(this.characteristic).onSet(v => ipx.setAnaPosition(v, this.platform, this.accessory));
         break;
-      }
+      }/*
+      case 'x4fp': {
+        this.service = this.accessory.getService(this.platform.Service.StatefulProgrammableSwitch)
+          || this.accessory.addService(this.platform.Service.StatefulProgrammableSwitch);
+        this.characteristic = this.platform.Characteristic.ProgrammableSwitchOutputState;
+        this.service.getCharacteristic(this.platform.Characteristic.ProgrammableSwitchOutputState)
+          .setProps({validValues:[0, 1, 2]});
+        this.service.setCharacteristic(this.platform.Characteristic.Name, accessory.context.device.displayName);
+        this.service.getCharacteristic(this.characteristic).onSet(v => ipx.setX4PF(v, this.platform, this.accessory));
+        break;
+      }*/
       default: { //lightbulb
         this.service = this.accessory.getService(this.platform.Service.Lightbulb)
         ||this.accessory.addService(this.platform.Service.Lightbulb);
@@ -50,11 +60,11 @@ export class DimmerHandler {
   }
 
   async updateAnaValue(value: number){
-    if (this.characteristic!== this.platform.Characteristic.CurrentPosition) {
-      this.service.updateCharacteristic(this.characteristic, value);
-    } else {
+    if (this.characteristic === this.platform.Characteristic.CurrentPosition) {
       //if curtain (xv4r) revert position
       this.service.updateCharacteristic(this.characteristic, 100 - value);
+    } else {
+      this.service.updateCharacteristic(this.characteristic, value);
     }
   }
 

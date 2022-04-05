@@ -12,7 +12,7 @@ fs.readFile('./config.schema.json', 'utf8', (err, data) => {
   const config = JSON.parse(data).schema;
   parse(config, 'api');
   parse(config, 'relays');
-  parse(config, 'dimmers');
+  parse(config, 'graduals');
   parse(config, 'analogInputs');
   parse(config, 'inputs');
 });
