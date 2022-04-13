@@ -5,8 +5,8 @@ import { IpxApiCaller } from '../ipx/api';
 
 
 export class GradualHandler {
-  public readonly index: number = this.accessory.context.device.index;
-  public readonly anaIndex: number = this.accessory.context.device.anaIndex;
+  public readonly index: string = this.accessory.context.device.index;
+  public readonly anaIndex: string = this.accessory.context.device.anaIndex;
   private service: Service;
   private readonly characteristic;
 
@@ -18,7 +18,7 @@ export class GradualHandler {
     // set accessory information
     this.accessory.getService(this.platform.Service.AccessoryInformation)!
       .setCharacteristic(this.platform.Characteristic.Manufacturer, 'GCE-Electronic')
-      .setCharacteristic(this.platform.Characteristic.Model, 'IPX-800');
+      .setCharacteristic(this.platform.Characteristic.Model, this.platform.model);
 
     switch(accessory.context.device.type) {
       case 'covering': {
@@ -26,35 +26,25 @@ export class GradualHandler {
          this.accessory.addService(this.platform.Service.WindowCovering);
         this.service.setCharacteristic(this.platform.Characteristic.Name, accessory.context.device.displayName);
         this.service.getCharacteristic(this.platform.Characteristic.TargetPosition)
-          .onSet((v) => ipx.setAnaPosition(100 - (v as number), this.platform, this.accessory));
+          .onSet((v) => ipx.setVRPosition(v, this.platform, this.accessory));
         this.characteristic = this.platform.Characteristic.CurrentPosition; //but onSet is TargetPosition
         break;
       }
       case 'fan': {
         this.service = this.accessory.getService(this.platform.Service.Fan) || this.accessory.addService(this.platform.Service.Fan);
         this.characteristic = this.platform.Characteristic.RotationSpeed;
-        this.service.getCharacteristic(this.platform.Characteristic.On).onSet((v) => ipx.setOn(v, this.platform, this.accessory));
+        this.service.getCharacteristic(this.platform.Characteristic.On).onSet((v) => ipx.setOnDimmer(v, this.platform, this.accessory));
         this.service.setCharacteristic(this.platform.Characteristic.Name, accessory.context.device.displayName);
-        this.service.getCharacteristic(this.characteristic).onSet(v => ipx.setAnaPosition(v, this.platform, this.accessory));
+        this.service.getCharacteristic(this.characteristic).onSet(v => ipx.setDimmerPosition(v, this.platform, this.accessory));
         break;
-      }/*
-      case 'x4fp': {
-        this.service = this.accessory.getService(this.platform.Service.StatefulProgrammableSwitch)
-          || this.accessory.addService(this.platform.Service.StatefulProgrammableSwitch);
-        this.characteristic = this.platform.Characteristic.ProgrammableSwitchOutputState;
-        this.service.getCharacteristic(this.platform.Characteristic.ProgrammableSwitchOutputState)
-          .setProps({validValues:[0, 1, 2]});
-        this.service.setCharacteristic(this.platform.Characteristic.Name, accessory.context.device.displayName);
-        this.service.getCharacteristic(this.characteristic).onSet(v => ipx.setX4PF(v, this.platform, this.accessory));
-        break;
-      }*/
+      }
       default: { //lightbulb
         this.service = this.accessory.getService(this.platform.Service.Lightbulb)
         ||this.accessory.addService(this.platform.Service.Lightbulb);
         this.characteristic = this.platform.Characteristic.Brightness;
-        this.service.getCharacteristic(this.platform.Characteristic.On).onSet((v) => ipx.setOn(v, this.platform, this.accessory));
+        this.service.getCharacteristic(this.platform.Characteristic.On).onSet((v) => ipx.setOnDimmer(v, this.platform, this.accessory));
         this.service.setCharacteristic(this.platform.Characteristic.Name, accessory.context.device.displayName);
-        this.service.getCharacteristic(this.characteristic).onSet(v => ipx.setAnaPosition(v, this.platform, this.accessory));
+        this.service.getCharacteristic(this.characteristic).onSet(v => ipx.setDimmerPosition(v, this.platform, this.accessory));
       }
     }
   }

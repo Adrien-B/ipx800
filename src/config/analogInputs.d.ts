@@ -12,6 +12,6 @@ export type AnalogInputs = {
   displayName: string;
   type: (HumiditySensorFrCapteurDHumidity | LightSensorFrCapteurDeLuminosite | TemperatureSensorFrThermometre) &
     string;
-  index: number;
+  index: string;
 
 };

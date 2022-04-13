@@ -7,7 +7,7 @@ import MapUtils from '../utils';
 
 export class IPXV5 implements IpxApiCaller{
 
-  async getStateByNumber(platform: IPXPlatform): Promise<Map<number, boolean>> {
+  async getStateByDeviceIndex(platform: IPXPlatform): Promise<Map<string, boolean>> {
     const api = platform.config['api'];
     const url = 'http://' + api.ip + '/api/core/io' + '?ApiKey=' + api.key ;
     return axios.get(url)
@@ -15,7 +15,7 @@ export class IPXV5 implements IpxApiCaller{
   }
 
 
-  async getAnaPositionByNumer(platform: IPXPlatform): Promise<Map<number, number>> {
+  async getAnaPositionByDeviceIndex(platform: IPXPlatform): Promise<Map<string, number>> {
     const api = platform.config['api'];
     const url = 'http://' + api.ip + '/api/core/ana' + '?ApiKey=' + api.key ;
     return axios.get(url)
@@ -25,7 +25,11 @@ export class IPXV5 implements IpxApiCaller{
       });
   }
 
-  async setOn(value: CharacteristicValue, platform: IPXPlatform, accessory: PlatformAccessory) : Promise<AxiosResponse> {
+  async setOnDimmer(value: CharacteristicValue, platform: IPXPlatform, accessory: PlatformAccessory) : Promise<AxiosResponse> {
+    return this.setOnRelay(value, platform, accessory);
+  }
+
+  async setOnRelay(value: CharacteristicValue, platform: IPXPlatform, accessory: PlatformAccessory) : Promise<AxiosResponse> {
     const api = platform.config['api'];
     const url = 'http://' + api.ip + '/api/core/io/' + accessory.context.device.index + '?ApiKey=' + api.key ;
     platform.log.debug('Set Characteristic On ->', value);
@@ -38,6 +42,14 @@ export class IPXV5 implements IpxApiCaller{
       platform.log.error('turning off '+ accessory.context.device.displayName+ '  using  ' + url + '  sending  ' + json);
       return axios.put(url, json);
     }
+  }
+
+  async setVRPosition(value: CharacteristicValue, platform: IPXPlatform, accessory: PlatformAccessory) : Promise<AxiosResponse> {
+    return this.setAnaPosition(100 - (value as number), platform, accessory);
+  }
+
+  async setDimmerPosition(value: CharacteristicValue, platform: IPXPlatform, accessory: PlatformAccessory) : Promise<AxiosResponse> {
+    return this.setAnaPosition(100 - (value as number), platform, accessory);
   }
 
   async setAnaPosition(value: CharacteristicValue, platform: IPXPlatform, accessory: PlatformAccessory) : Promise<AxiosResponse> {

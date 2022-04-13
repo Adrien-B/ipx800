@@ -18,6 +18,8 @@ As now it support different devices :
     * analog inputs (ipx, x-thl)
 2. ipx v4
     * relays
+    * gradual (x-dimmer, x4Vr) without state update
+    * analog inputs (ipx, x-thl)
 
 
 This is heavily based on the hombridge plateform template it may let you control your ipx800 relays.
@@ -40,7 +42,7 @@ sudo npm install -g  typescript rimraf
 
 # build and link plugin
 npm run build 
-npm run link #or sudo npm run link
+npm link #or sudo npm link
 
 
 #(re)start homebridge if not done already
@@ -65,8 +67,9 @@ See the following json snippet exemple: 
 
 ```
 
+### Configure v5 devices
 Than add all your devices (relays, dimmer, inputs).
-See the following json snippet exemple: 
+See the following json snippet exemple for v5: 
 ```
             "relays": [
                 {
@@ -108,3 +111,32 @@ See the following json snippet exemple: 
                 }
             ],
 ```
+
+
+### Configure v4 devices
+
+
+            "relays": [
+                {
+                    "displayName": "chambre",
+                    "type": "light",
+                    "index": "r2"
+                },
+                {
+                    "displayName": "ventilation",
+                    "type": "fan",
+                    "index": "r3"
+                }
+            ],
+            "analogInputs": [
+                {
+                    "displayName": "séjour",
+                    "type": "temperature",
+                    "index": "THL1-TEMP"
+                },
+                {
+                    "displayName": "extérieur",
+                    "type": "temperature",
+                    "index": "THL2-LUM"
+                }
+            ],

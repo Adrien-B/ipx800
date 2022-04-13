@@ -22,6 +22,8 @@ import {Device, IODeviceHandler, AnaDeviceHandler} from './config/deviceConfig';
  * parse the user config and discover/register accessories with Homebridge.
  */
 export class IPXPlatform implements DynamicPlatformPlugin {
+  public readonly model = 'IPX-800';
+
   public readonly Service: typeof Service = this.api.hap.Service;
   public readonly Characteristic: typeof Characteristic = this.api.hap.Characteristic;
 
@@ -93,36 +95,46 @@ export class IPXPlatform implements DynamicPlatformPlugin {
     const anaDevices : Array<AnaDeviceHandler> = graduals.concat(anaInputs);
 
     setInterval( () => {
-      this.ipxApiCaller.getStateByNumber(this)
-        .then(stateByIndex => Promise.all(ioDevices.map(d => d.updateIO(stateByIndex[d.index]))))
-        .catch(err => {
-          if (!this.pullError) {
-            this.log.error('could not update input/output devices state', err);
-            // this.pullError = true;
-          }
-        });
-    }, 3000);
-
-    setInterval( () => {
-      this.ipxApiCaller.getAnaPositionByNumer(this)
-        .then(valueByIndex => {
-          Promise.all(anaDevices.map(d => {
-            const anaIndex = d.anaIndex || d.index;
-            d.updateAnaValue(valueByIndex[anaIndex]);
+      this.ipxApiCaller.getStateByDeviceIndex(this)
+      	.then(stateByIndex => {
+          Promise.all(ioDevices.map(d => {
+            if (stateByIndex[d.index.toUpperCase()] !== undefined) {
+              d.updateIO(stateByIndex[d.index.toUpperCase()]);
+            }
           }));
+          this.pullError = false;
         })
         .catch(err => {
           if (!this.pullError) {
             this.log.error('could not update input/output devices state', err);
-            // this.pullError = true;
+            this.pullError = true;
           }
         });
-    }, 4550);
+    }, 2930);
+
+    setInterval( () => {
+      this.ipxApiCaller.getAnaPositionByDeviceIndex(this)
+        .then(positionByIndex => {
+          Promise.all(anaDevices.map(d => {
+            const anaIndex = d.anaIndex || d.index;
+            if (positionByIndex[anaIndex.toUpperCase()] !== undefined) {
+              d.updateAnaValue(positionByIndex[anaIndex.toUpperCase()]);
+            }
+          }));
+          this.pullError = false;
+        })
+        .catch(err => {
+          if (!this.pullError) {
+            this.log.error('could not update input/output devices state', err);
+            this.pullError = true;
+          }
+        });
+    }, 3553 );
   }
 
 
   hasName(device: Device){
-    if ((!device.displayName)) {
+    if (!device.displayName) {
       this.log.error('missing name in configuration for: ' + JSON.stringify(device));
       return false;
     }
@@ -130,15 +142,15 @@ export class IPXPlatform implements DynamicPlatformPlugin {
   }
 
   hasIndex(device: Device){
-    if ((!device.index)) {
-      this.log.error('missing name in configuration for: ' + JSON.stringify(device));
+    if (!device.index) {
+      this.log.error('missing index in configuration for: ' + JSON.stringify(device));
       return false;
     }
     return true;
   }
 
   hasAnaIndex(dimmer : Graduals):boolean {
-    if (((!dimmer.anaIndex) && (this.ipxVersion === 'v5'))) {
+    if ((!dimmer.anaIndex) && (this.ipxVersion === 'v5')) {
       this.log.error('missing anaIndex number for dimmer: ' + JSON.stringify(dimmer));
       return false;
     }

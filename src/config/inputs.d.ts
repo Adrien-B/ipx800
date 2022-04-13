@@ -11,6 +11,6 @@ export type ContactSensorFrContacteur = "contact";
 export type Inputs = {
   displayName: string;
   type: (MouvementSensorFrDetecteurDeMouvement | SwitchFrInterrupteur | ContactSensorFrContacteur) & string;
-  index: number;
+  index: string;
 
 };

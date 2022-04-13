@@ -20,7 +20,8 @@
   "scripts": {
     "lint": "eslint src/**.ts --max-warnings=0",
     "watch": "npm run build && npm link && nodemon",
-    "build": "ts-node src/configParser.ts && rimraf ./dist && tsc",
+    "full-build": "ts-node src/configParser.ts && rimraf ./dist && tsc",
+    "build": "rimraf ./dist && tsc",
     "prepublishOnly": "npm run lint && npm run build"
   },
   "keywords": [
@@ -31,11 +32,11 @@
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",
     "eslint": "^8.0.1",
+    "homebridge": "^1.3.5",
     "json-schema-to-typescript": "^10.1.5",
     "rimraf": "^3.0.2",
     "ts-node": "^10.5.0",
-    "typescript": "^4.5.4",
-    "homebridge": "^1.3.5"
+    "typescript": "^4.5.4"
   },
   "dependencies": {
     "axios": "^0.24.0",

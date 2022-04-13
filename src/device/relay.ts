@@ -5,7 +5,7 @@ import { IpxApiCaller } from '../ipx/api';
 
 
 export class RelayHandler {
-  public readonly index: number = this.accessory.context.device.index;
+  public readonly index: string = this.accessory.context.device.index;
   private readonly service: Service;
 
   constructor(
@@ -46,17 +46,17 @@ export class RelayHandler {
     }
     this.service.setCharacteristic(this.platform.Characteristic.Name, accessory.context.device.displayName);
     if (accessory.context.device.type !== 'bswitch') {
-      this.service.getCharacteristic(this.platform.Characteristic.On).onSet((v) => ipx.setOn(v, this.platform, this.accessory));
+      this.service.getCharacteristic(this.platform.Characteristic.On).onSet((v) => ipx.setOnRelay(v, this.platform, this.accessory));
     } else {
       this.service.getCharacteristic(this.platform.Characteristic.On).onSet((v) => {
         if (v as boolean){
-          ipx.setOn(true, this.platform, this.accessory);
-          new Promise(f => setTimeout(f, 250)).then(() => {
-            ipx.setOn(false, this.platform, this.accessory);
+          ipx.setOnRelay(true, this.platform, this.accessory);
+          new Promise(f => setTimeout(f, 150)).then(() => {
+            ipx.setOnRelay(false, this.platform, this.accessory);
             this.service.updateCharacteristic(this.platform.Characteristic.On, false);
           });
         } else {
-          ipx.setOn(false, this.platform, this.accessory);
+          ipx.setOnRelay(false, this.platform, this.accessory);
         }
       });
     }
