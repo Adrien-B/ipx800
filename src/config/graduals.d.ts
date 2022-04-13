@@ -12,7 +12,7 @@ export type WindowCoveringFrVoletRideau = "covering";
 export type Graduals = {
   displayName: string;
   type: (LightFrLumiere | FanFrVentilation | X4Fp | WindowCoveringFrVoletRideau) & string;
-  index: number;
-  anaIndex: number;
+  index: string;
+  anaIndex: string;
 
 };

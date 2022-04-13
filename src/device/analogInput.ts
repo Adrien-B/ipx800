@@ -3,8 +3,8 @@ import { IPXPlatform } from '../platform';
 
 
 export class AnalogInputHandler {
-  public readonly index: number = this.accessory.context.device.index;
-  public readonly anaIndex: number = this.accessory.context.device.anaIndex;
+  public readonly index: string = this.accessory.context.device.index;
+  public readonly anaIndex: string = this.accessory.context.device.anaIndex;
   private readonly service: Service;
   private readonly characteristic;
 
@@ -42,7 +42,9 @@ export class AnalogInputHandler {
   async updateAnaValue(state: number){
     if (this.characteristic === this.platform.Characteristic.CurrentAmbientLightLevel) {
       state = Math.max(state, 0.1);
-    }
+    }// else if (this.index == "THL1-TEMP") {
+//	    state = (state - 1);
+  //  }
     this.service.updateCharacteristic(this.characteristic, state);
   }
 }

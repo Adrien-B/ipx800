@@ -94,35 +94,43 @@ export class IPXPlatform implements DynamicPlatformPlugin {
 
     setInterval( () => {
       this.ipxApiCaller.getStateByNumber(this)
-        .then(stateByIndex => Promise.all(ioDevices.map(d => d.updateIO(stateByIndex[d.index]))))
+      	.then(stateByIndex => {
+	  Promise.all(ioDevices.map(d => {
+	    if (stateByIndex[d.index.toUpperCase()] !== undefined) {
+	      d.updateIO(stateByIndex[d.index.toUpperCase()]);
+	    }
+	  }));
+        })
         .catch(err => {
           if (!this.pullError) {
             this.log.error('could not update input/output devices state', err);
-            // this.pullError = true;
+            this.pullError = true;
           }
         });
-    }, 3000);
+    }, 3500);
 
     setInterval( () => {
       this.ipxApiCaller.getAnaPositionByNumer(this)
         .then(valueByIndex => {
           Promise.all(anaDevices.map(d => {
             const anaIndex = d.anaIndex || d.index;
-            d.updateAnaValue(valueByIndex[anaIndex]);
+	    if (valueByIndex[anaIndex.toUpperCase()] !== undefined) {
+            	d.updateAnaValue(valueByIndex[anaIndex.toUpperCase()]);
+	    }
           }));
         })
         .catch(err => {
           if (!this.pullError) {
             this.log.error('could not update input/output devices state', err);
-            // this.pullError = true;
+            this.pullError = true;
           }
         });
-    }, 4550);
+    }, 5550);
   }
 
 
   hasName(device: Device){
-    if ((!device.displayName)) {
+    if (!device.displayName) {
       this.log.error('missing name in configuration for: ' + JSON.stringify(device));
       return false;
     }
@@ -130,15 +138,15 @@ export class IPXPlatform implements DynamicPlatformPlugin {
   }
 
   hasIndex(device: Device){
-    if ((!device.index)) {
-      this.log.error('missing name in configuration for: ' + JSON.stringify(device));
+    if (!device.index) {
+      this.log.error('missing index in configuration for: ' + JSON.stringify(device));
       return false;
     }
     return true;
   }
 
   hasAnaIndex(dimmer : Graduals):boolean {
-    if (((!dimmer.anaIndex) && (this.ipxVersion === 'v5'))) {
+    if ((!dimmer.anaIndex) && (this.ipxVersion === 'v5')) {
       this.log.error('missing anaIndex number for dimmer: ' + JSON.stringify(dimmer));
       return false;
     }

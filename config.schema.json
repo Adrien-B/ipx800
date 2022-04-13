@@ -33,17 +33,17 @@
             "type": "string",
             "default": "light",
             "oneOf": [
-              { "title": "light (fr:lumière)", "enum": ["light"] },
-              { "title": "outlet (fr:prise)", "enum": ["outlet"] },
-              { "title": "fan (fr:ventilation)", "enum": ["fan"] },
-              { "title": "switch (fr:interrupteur)", "enum": ["switch"] },
-              { "title": "button (fr:poussoir)", "enum": ["bswitch"] },  
+              { "title": "light", "enum": ["light"] },
+              { "title": "outlet", "enum": ["outlet"] },
+              { "title": "fan", "enum": ["fan"] },
+              { "title": "switch", "enum": ["switch"] },
+              { "title": "button", "enum": ["bswitch"] },  
               { "title": "valve", "enum": ["valve"]}
             ],
             "required": true
           },
           "index": {
-            "type": "number"
+            "type": "string"
           }
         } 
       }
@@ -62,19 +62,18 @@
             "oneOf": [
               { "title": "light (fr:lumière)", "enum": ["light"] },
               { "title": "fan (fr:ventilation)", "enum": ["fan"] },
-              { "title": "x4fp", "enum": ["x4fp"] },
-              { "title": "window covering (fr:volet/rideau)", "enum": ["covering"] }
+              { "title": "window covering", "enum": ["covering"] }
             ],
             "required": true
           },
           "index": {
-            "type": "number"
+            "type": "string"
           },
           "anaIndex": {
             "condition": {
               "functionBody": "return model.api.version && model.api.version!=='v4'"
             },
-            "type": "number"
+            "type": "string"
           }
         } 
       }
@@ -91,14 +90,14 @@
             "type": "string",
             "default": "temperature",
             "oneOf": [
-              { "title": "humidity sensor (fr:capteur d’humidity)", "enum": ["humidity"] },
-              { "title": "light sensor (fr:capteur de luminosité)", "enum": ["light"] },
-              { "title": "temperature sensor (fr:thermomètre)", "enum": ["temperature"] }      
+              { "title": "humidity sensor", "enum": ["humidity"] },
+              { "title": "light sensor", "enum": ["light"] },
+              { "title": "temperature sensor", "enum": ["temperature"] }      
             ],
             "required": true
           },
           "index": {
-            "type": "number"
+            "type": "string"
           }
         } 
       }
@@ -115,14 +114,14 @@
             "type": "string",
             "default": "switch",
             "oneOf": [
-              { "title": "mouvement sensor (fr:détecteur de mouvement)", "enum": ["motion"] },
-              { "title": "switch (fr:interrupteur)", "enum": ["switch"] }   ,
-              { "title": "contact sensor (fr:contacteur)", "enum": ["contact"] }   
+              { "title": "mouvement sensor", "enum": ["motion"] },
+              { "title": "switch", "enum": ["switch"] }   ,
+              { "title": "contact sensor", "enum": ["contact"] }   
             ],
             "required": true
           },
           "index": {
-            "type": "number"
+            "type": "string"
           }
         } 
       }
@@ -150,9 +149,9 @@
       "orderable": true,
       "buttonText": "Add relay",
       "items": [
-        {"key":"relays[].displayName", "title": "displayed name (fr: nom affiché)"},
+        {"key":"relays[].displayName", "title": "displayed name"},
         {"key":"relays[].type"},
-        {"key":"relays[].index", "description": "api number on V4, io index on V5"}
+        {"key":"relays[].index", "description": "api name (ex R1) on V4, io index on V5"}
       ]
     },
     {
@@ -163,10 +162,10 @@
       "orderable": true,
       "buttonText": "Add graduals",
       "items": [
-        {"key":"graduals[].displayName", "title": "displayed name (fr: nom affiché)"},
+        {"key":"graduals[].displayName", "title": "displayed name"},
         {"key":"graduals[].type"},
-        {"key":"graduals[].index", "description": "api number on V4, io index on V5"},
-        {"key":"graduals[].anaIndex", "title": "ana/consigne index", "description": "consigne index on V5, to get brightness level"}
+        {"key":"graduals[].index", "description": "api number on V4 (G1 for first light x-dimmer, VR5 for first chanel of 2nd X-VR), io index on V5"},
+        {"key":"graduals[].anaIndex", "title": "dimmer-channel on V4 (), ana/consigne index on V5", "description": "consigne index on V5, to get brightness level"}
       ]
     },
     {
@@ -177,7 +176,7 @@
       "orderable": true,
       "buttonText": "Add inputs/sensors",
       "items": [
-        {"key":"inputs[].displayName", "title": "displayed name (fr: nom affiché)"},
+        {"key":"inputs[].displayName", "title": "displayed name"},
         {"key":"inputs[].type"},
         {"key":"inputs[].index", "description": "api number on V4, io index on V5"}
       ]
@@ -190,9 +189,9 @@
       "orderable": true,
       "buttonText": "Add xthl and analog sensors",
       "items": [
-        {"key":"analogInputs[].displayName", "title": "displayed name (fr: nom affiché)"},
+        {"key":"analogInputs[].displayName", "title": "displayed name"},
         {"key":"analogInputs[].type"},
-        {"key":"analogInputs[].index", "description": "api number on V4, io index on V5"}
+        {"key":"analogInputs[].index", "description": "api number on V4 (ex : THL1-TEMP, THL2-HUM), io index on V5"}
       ]
     }
   ]  

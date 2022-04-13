@@ -14,6 +14,6 @@ export type Valve = "valve";
 export type Relays = {
   displayName: string;
   type: (LightFrLumiere | OutletFrPrise | FanFrVentilation | SwitchFrInterrupteur | ButtonFrPoussoir | Valve) & string;
-  index: number;
+  index: string;
 
 };

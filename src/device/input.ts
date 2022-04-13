@@ -3,7 +3,7 @@ import { IPXPlatform } from '../platform';
 
 
 export class InputHandler {
-  public readonly index: number = this.accessory.context.device.index;
+  public readonly index: string = this.accessory.context.device.index;
   private readonly service: Service;
   private readonly characteristic;
 
