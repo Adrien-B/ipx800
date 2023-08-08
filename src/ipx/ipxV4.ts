@@ -31,6 +31,8 @@ export class IPXV4 implements IpxApiCaller {
       Object.keys(ipxInfo.data).map(key => {
         if (key.startsWith('G')) {
           positionByIndex[key] = (ipxInfo.data[key]['Valeur']);
+        } else if (key.startsWith('THL')) {
+          positionByIndex[key] = ipxInfo.data[key];
         }
       });
       return positionByIndex;

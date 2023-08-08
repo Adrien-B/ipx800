@@ -1,7 +1,7 @@
-import {Relays} from './relays.d';
-import {Graduals} from './graduals.d';
-import {Inputs} from './inputs.d';
-import {AnalogInputs} from './analogInputs.d';
+import {Relays} from './relays';
+import {Graduals} from './graduals';
+import {Inputs} from './inputs';
+import {AnalogInputs} from './analogInputs';
 import { RelayHandler } from '../device/relay';
 import { GradualHandler } from '../device/gradual';
 import { InputHandler } from '../device/input';
