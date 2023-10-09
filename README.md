@@ -2,7 +2,7 @@
 <p align="center">
 
 <!-- <img src="https://github.com/homebridge/branding/raw/master/logos/homebridge-wordmark-logo-vertical.png" width="150"> -->
-<img src="http://sarakha63-domotique.fr/wp-content/uploads/2018/03/IPX_800_LE_CHOIX_2.jpg" width="250">
+<img src="https://play-lh.googleusercontent.com/9doSEOplvz2nX67aaO6mCUc-UpcqQSEIalcfookSB0tR2QA6F9ffMv1QKcHWfWp3kjim" width="250">
 
 </p>
 
