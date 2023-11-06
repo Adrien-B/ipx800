@@ -1,4 +1,5 @@
 import http from 'http';
+import { IPXPlatform } from 'platform';
 
 export class WebhookServer {
 

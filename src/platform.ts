@@ -32,8 +32,8 @@ export class IPXPlatform implements DynamicPlatformPlugin {
   // this is used to track restored cached accessories
   public readonly accessories: PlatformAccessory[] = [];
 
-  public ioDevices : Array<IODeviceHandler>;
-  public anaDevices : Array<AnaDeviceHandler>;
+  public ioDevices = [];
+  public anaDevices = [];
 
   private pullError = false;
 
@@ -53,14 +53,15 @@ export class IPXPlatform implements DynamicPlatformPlugin {
       const graduals = deviceConf.graduals.map(d => this.findOrCreate(d, (da) => new GradualHandler(this, da, this.ipxApiCaller))) ;
       const inputs = deviceConf.inputs.map(d => this.findOrCreate(d, (da) => new InputHandler(this, da))) ;
       const anaInputs = deviceConf.anaInputs.map(d => this.findOrCreate(d, (da) => new AnalogInputHandler(this, da))) ;
-
       this.ioDevices = relays.concat(graduals, inputs).filter(d => d.index);
       this.anaDevices = graduals.concat(anaInputs);
-
       this.webhookServer.start(this);
+
+      updateDevices();
+
       if(this.config.api.pollInterval && this.config.api.pollInterval > 0){
         setInterval(function(){
-          this.updateDevices();
+          updateDevices();
         }, this.config.api.pollInterval * 1000);
       }
     });
