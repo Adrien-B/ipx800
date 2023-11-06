@@ -72,8 +72,29 @@ export class IPXV4 implements IpxApiCaller {
     const nVal = 100 - Math.min(Math.max(value as number, 0), 100);
     const api = platform.config['api'];
     const url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Set' + accessory.context.device.index + '=' + nVal;
-    platform.log.error('dimmer v4------ '+ accessory.context.device.displayName + ' ---------- on ' + url);
+    platform.log.debug('dimmer v4------ '+ accessory.context.device.displayName + ' ---------- on ' + url);
     platform.log.debug('Set Characteristic position -> ', nVal);
+    let loop = 0
+    let myInterVal = setInterval(function(){ 
+      platform.log.info('Begin interval');
+      loop++
+      if(loop > 12){
+        platform.log.info('End too much loop');
+        clearInterval(myInterval);
+      }
+      let positionByIndex = getAnaPositionByDeviceIndex(platform);
+      if(positionByIndex[accessory.context.device.index] !== undefined){
+        let currentPosition = positionByIndex[accessory.context.device.index];
+        if(nVal == (100 - currentPosition)){
+          platform.log.info('Move ended');
+          platform.updateDevices();
+          clearInterval(myInterval);
+        }else{
+          platform.log.info('Update position');
+          accessory.getService(platform.Service.WindowCovering).updateCharacteristic(platform.Characteristic.CurrentPosition, 100 - currentPosition);
+        }
+      }
+    },5000)
     return axios.get(url);
   }
 
