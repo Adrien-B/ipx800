@@ -86,13 +86,9 @@ export class IPXV4 implements IpxApiCaller {
         if(positionByIndex[accessory.context.device.index] !== undefined){
           let currentPosition = positionByIndex[accessory.context.device.index];
           if(nVal == currentPosition){
-            platform.log.info('Move ended');
             platform.updateDevices();
             clearInterval(myInterval);
             return;
-          }else{
-            platform.log.info('Update position');
-            accessory.getService(platform.Service?.WindowCovering).updateCharacteristic(platform.Characteristic?.CurrentPosition, 100 - currentPosition);
           }
         }
       })
