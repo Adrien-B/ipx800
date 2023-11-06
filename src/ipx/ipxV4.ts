@@ -33,6 +33,11 @@ export class IPXV4 implements IpxApiCaller {
           positionByIndex[key] = (ipxInfo.data[key]['Valeur']);
         } else if (key.startsWith('THL')) {
           positionByIndex[key] = ipxInfo.data[key];
+        } else if (key.startsWith('VR')) {
+          let info = key.replace('VR','').split('-')
+          if(info.length == 2){
+            positionByIndex[key] = ipxInfo.data['VR'+String(info[0]*info[1]).padStart(2, "0")];
+          }
         }
       });
       return positionByIndex;
@@ -65,9 +70,9 @@ export class IPXV4 implements IpxApiCaller {
   async setVRPosition(value: CharacteristicValue, platform: IPXPlatform, accessory: PlatformAccessory): Promise<AxiosResponse> {
     const nVal = 100 - Math.min(Math.max(value as number, 0), 100);
     const api = platform.config['api'];
-    const url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&SetVR' + accessory.context.device.index + '=' + nVal;
+    const url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Set' + accessory.context.device.index + '=' + nVal;
     platform.log.error('dimmer v4------ '+ accessory.context.device.displayName + ' ---------- on ' + url);
-    platform.log.debug('Set Characteristic Brightness -> ', nVal);
+    platform.log.debug('Set Characteristic position -> ', nVal);
     return axios.get(url);
   }
 
