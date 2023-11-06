@@ -76,7 +76,7 @@ export class IPXV4 implements IpxApiCaller {
     platform.log.debug('Set Characteristic position -> ', nVal);
     let loop = 0
     let self = this
-    let myInterval = setInterval(function(){ 
+    let myInterval = setInterval(function(){
       loop++
       if(loop > 6){
         clearInterval(myInterval);
@@ -86,6 +86,7 @@ export class IPXV4 implements IpxApiCaller {
         if(positionByIndex[accessory.context.device.index] !== undefined){
           let currentPosition = positionByIndex[accessory.context.device.index];
           if(nVal == currentPosition){
+            platform.log.info('Move ended');
             platform.updateDevices();
             clearInterval(myInterval);
             return;
