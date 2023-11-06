@@ -32,8 +32,8 @@ export class IPXPlatform implements DynamicPlatformPlugin {
   // this is used to track restored cached accessories
   public readonly accessories: PlatformAccessory[] = [];
 
-  public ioDevices = [];
-  public anaDevices = [];
+  public ioDevices;
+  public anaDevices;
 
   private pullError = false;
 
