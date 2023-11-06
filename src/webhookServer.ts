@@ -9,12 +9,8 @@ export class WebhookServer {
             return;
         }
         const server = http.createServer()
-        server.listen(platform.config['api'].webhookPort, error => {
-            if (error) {
-                platform.log.debug(error);
-            }
-            platform.log.debug("Started server for webhooks on port "+platform.config['api'].webhookPort);
-        })
+        server.listen(platform.config['api'].webhookPort)
+        platform.log.debug("Started server for webhooks on port "+platform.config['api'].webhookPort);
         server.on("request", (request, response) => {
             platform.log.debug("Received request");
             const { method, url, headers } = request
