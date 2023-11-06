@@ -1,4 +1,4 @@
-import { API as homebridgeAPI, PlatformAccessory, CharacteristicValue, APIEvent } from 'homebridge';
+import { PlatformAccessory, CharacteristicValue, APIEvent } from 'homebridge';
 import { IPXPlatform } from '../platform';
 import { IpxApiCaller } from './api';
 import axios from 'axios';
@@ -92,7 +92,7 @@ export class IPXV4 implements IpxApiCaller {
             return;
           }else{
             platform.log.info('Update position');
-            accessory.getService(platform.Service.WindowCovering).updateCharacteristic(homebridgeAPI.hap.Characteristic.CurrentPosition, 100 - currentPosition);
+            accessory.getService(platform.Service.WindowCovering).updateCharacteristic(platform.Characteristic?.CurrentPosition, 100 - currentPosition);
           }
         }
       })
