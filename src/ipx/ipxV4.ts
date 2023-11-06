@@ -36,7 +36,7 @@ export class IPXV4 implements IpxApiCaller {
         } else if (key.startsWith('VR')) {
           let info = key.replace('VR','').split('-')
           if(info.length == 2){
-            let vrKey = String(info[0]*info[1]).padStart(2, "0")
+            let vrKey = String(parseInt(info[0])*parseInt(info[1])).padStart(2, "0")
             positionByIndex[key] = ipxInfo.data['VR'+vrKey];
           }
         }
