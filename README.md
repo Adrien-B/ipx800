@@ -62,8 +62,10 @@ See the following json snippet exemple: 
  "api": {
                 "ip": "*.*.*.*",
                 "key": "*",
-                "version": "v5"
-                "pollInterval": "60"
+                "version": "v5",
+                "pollInterval": 60,
+                "webhookPort": 58698,
+                "webhookPath": "TODO"
             },
 
 ```
