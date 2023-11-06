@@ -82,7 +82,7 @@ export class IPXV4 implements IpxApiCaller {
       if(loop > 6){
         platform.log.info('End too much loop');
         clearInterval(myInterval);
-        return,
+        return;
       }
       self.getAnaPositionByDeviceIndex(platform).then(positionByIndex => {
         platform.log.info('Index '+accessory.context.device.index);
