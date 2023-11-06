@@ -97,6 +97,7 @@ export class IPXPlatform implements DynamicPlatformPlugin {
 
     this.ipxApiCaller.getAnaPositionByDeviceIndex(this)
       .then(positionByIndex => {
+        this.log.info(JSON.stringify(positionByIndex));
         Promise.all(this.anaDevices.map(d => {
           const anaIndex = d.anaIndex || d.index;
           this.log.info('Search index '+anaIndex.toUpperCase());
