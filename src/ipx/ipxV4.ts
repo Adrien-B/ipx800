@@ -38,7 +38,7 @@ export class IPXV4 implements IpxApiCaller {
           if(info.length == 2){
             platform.log.info('v4------ index  '+ String(parseInt(info[0])*parseInt(info[1])).padStart(2, "0") + ' Value ' + ipxInfo.data[key]);
             positionByIndex[String(parseInt(info[0])*parseInt(info[1])).padStart(2, "0")] = ipxInfo.data[key];
-            platform.log.info('v4------ index2  '+ String(parseInt(info[0])*parseInt(info[1])).padStart(2, "0") + ' Value ' + positionByIndex[String(parseInt(info[0])*parseInt(info[1])).padStart(2, "0")] = ipxInfo.data[key]);
+            platform.log.info('v4------ index2  '+ String(parseInt(info[0])*parseInt(info[1])).padStart(2, "0") + ' Value ' + positionByIndex[String(parseInt(info[0])*parseInt(info[1])).padStart(2, "0")]);
           }
         }
       });
