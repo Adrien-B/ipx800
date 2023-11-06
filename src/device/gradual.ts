@@ -22,11 +22,9 @@ export class GradualHandler {
 
     switch(accessory.context.device.type) {
       case 'covering': {
-        this.service = this.accessory.getService(this.platform.Service.WindowCovering) ||
-         this.accessory.addService(this.platform.Service.WindowCovering);
+        this.service = this.accessory.getService(this.platform.Service.WindowCovering) || this.accessory.addService(this.platform.Service.WindowCovering);
         this.service.setCharacteristic(this.platform.Characteristic.Name, accessory.context.device.displayName);
-        this.service.getCharacteristic(this.platform.Characteristic.TargetPosition)
-          .onSet((v) => ipx.setVRPosition(v, this.platform, this.accessory));
+        this.service.getCharacteristic(this.platform.Characteristic.TargetPosition).onSet((v) => ipx.setVRPosition(v, this.platform, this.accessory));
         this.characteristic = this.platform.Characteristic.CurrentPosition; //but onSet is TargetPosition
         break;
       }
@@ -53,6 +51,7 @@ export class GradualHandler {
     if (this.characteristic === this.platform.Characteristic.CurrentPosition) {
       //if curtain (xv4r) revert position
       this.service.updateCharacteristic(this.characteristic, 100 - value);
+      this.service.updateCharacteristic(this.platform.Characteristic..PositionState, this.platform.Characteristic.PositionState.STOPPED);
     } else {
       this.service.updateCharacteristic(this.characteristic, value);
     }
