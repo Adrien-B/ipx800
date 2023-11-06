@@ -75,7 +75,7 @@ export class IPXV4 implements IpxApiCaller {
     platform.log.debug('dimmer v4------ '+ accessory.context.device.displayName + ' ---------- on ' + url);
     platform.log.debug('Set Characteristic position -> ', nVal);
     let loop = 0
-    let myInterVal = setInterval(function(){ 
+    let myInterval = setInterval(function(){ 
       platform.log.info('Begin interval');
       loop++
       if(loop > 12){
