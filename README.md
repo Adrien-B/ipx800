@@ -63,6 +63,7 @@ See the following json snippet exemple: 
                 "ip": "*.*.*.*",
                 "key": "*",
                 "version": "v5"
+                "pollInterval": "60"
             },
 
 ```

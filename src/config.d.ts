@@ -7,6 +7,7 @@
 
 export type IpxIp = string;
 export type IpxApiKey = string;
+export type IpxPollInterval = number;
 export type IpxVersion = IpxVersion1 & IpxVersion2;
 export type IpxVersion1 = V4 | V5;
 export type V4 = "v4";
@@ -17,5 +18,6 @@ export interface IpxApiConfiguration {
   ip?: IpxIp;
   key?: IpxApiKey;
   version?: IpxVersion;
+  pollInterval?: IpxPollInterval;
   [k: string]: unknown;
 }

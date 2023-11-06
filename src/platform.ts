@@ -44,6 +44,11 @@ export class IPXPlatform implements DynamicPlatformPlugin {
       log.debug('Executed didFinishLaunching callback');
       // run the method to discover / register your devices as accessories
       this.discoverDevices();
+      if(this.config.api.pollInterval && this.config.api.pollInterval > 0){
+        setInterval(function(){
+          this.discoverDevices();
+        }, this.config.api.pollInterval * 1000);
+      }
     });
   }
 
@@ -53,7 +58,6 @@ export class IPXPlatform implements DynamicPlatformPlugin {
    */
   configureAccessory(device: PlatformAccessory) {
     this.log.info('Loading accessory from cache:', device.displayName);
-
     this.accessories.push(device);
   }
 
@@ -74,7 +78,6 @@ export class IPXPlatform implements DynamicPlatformPlugin {
     const ioDevices : Array<IODeviceHandler> = relays.concat(graduals, inputs).filter(d => d.index);
     const anaDevices : Array<AnaDeviceHandler> = graduals.concat(anaInputs);
 
-    //setInterval( () => {
     this.ipxApiCaller.getStateByDeviceIndex(this)
       .then(stateByIndex => {
         Promise.all(ioDevices.map(d => {
@@ -90,9 +93,7 @@ export class IPXPlatform implements DynamicPlatformPlugin {
           this.pullError = true;
         }
       });
-    //}, 2930);
 
-    //setInterval( () => {
     this.ipxApiCaller.getAnaPositionByDeviceIndex(this)
       .then(positionByIndex => {
         Promise.all(anaDevices.map(d => {
@@ -109,7 +110,6 @@ export class IPXPlatform implements DynamicPlatformPlugin {
           this.pullError = true;
         }
       });
-    //}, 3553 );
   }
 
 
