@@ -88,6 +88,7 @@ export class IPXV4 implements IpxApiCaller {
         platform.log.info(JSON.stringify(positionByIndex));
         if(positionByIndex[accessory.context.device.index] !== undefined){
           let currentPosition = positionByIndex[accessory.context.device.index];
+          platform.log.info('Target '+nVal+' Current pos '+(100 - currentPosition));
           if(nVal == (100 - currentPosition)){
             platform.log.info('Move ended');
             platform.updateDevices();
