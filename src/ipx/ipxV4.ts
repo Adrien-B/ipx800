@@ -27,7 +27,6 @@ export class IPXV4 implements IpxApiCaller {
     const api = platform.config['api'];
     const url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Get=all ';
     return axios.get(url).then(ipxInfo => {
-      platform.log.info(JSON.stringify(ipxInfo));
       const positionByIndex = new Map<string, number>();
       Object.keys(ipxInfo.data).map(key => {
         if (key.startsWith('G')) {
