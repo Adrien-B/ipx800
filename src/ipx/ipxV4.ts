@@ -82,7 +82,7 @@ export class IPXV4 implements IpxApiCaller {
         platform.log.info('End too much loop');
         clearInterval(myInterval);
       }
-      let positionByIndex = getAnaPositionByDeviceIndex(platform);
+      let positionByIndex = platform.ipxApiCaller.getAnaPositionByDeviceIndex(platform);
       if(positionByIndex[accessory.context.device.index] !== undefined){
         let currentPosition = positionByIndex[accessory.context.device.index];
         if(nVal == (100 - currentPosition)){
