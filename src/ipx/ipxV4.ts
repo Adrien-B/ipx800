@@ -82,6 +82,7 @@ export class IPXV4 implements IpxApiCaller {
       if(loop > 6){
         platform.log.info('End too much loop');
         clearInterval(myInterval);
+        return,
       }
       self.getAnaPositionByDeviceIndex(platform).then(positionByIndex => {
         platform.log.info('Index '+accessory.context.device.index);
@@ -93,6 +94,7 @@ export class IPXV4 implements IpxApiCaller {
             platform.log.info('Move ended');
             platform.updateDevices();
             clearInterval(myInterval);
+            return;
           }else{
             platform.log.info('Update position');
             //accessory.getService(platform.Service.WindowCovering).updateCharacteristic(platform.Characteristic.CurrentPosition, 100 - currentPosition);
