@@ -92,7 +92,7 @@ export class IPXV4 implements IpxApiCaller {
             return;
           }else{
             platform.log.info('Update position');
-            accessory.getService(platform.Service.WindowCovering).updateCharacteristic(platform.Characteristic?.CurrentPosition, 100 - currentPosition);
+            accessory.getService(platform.Service.WindowCovering).updateCharacteristic(platform?.Characteristic?.CurrentPosition, 100 - currentPosition);
           }
         }
       })
