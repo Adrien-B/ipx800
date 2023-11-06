@@ -84,6 +84,8 @@ export class IPXV4 implements IpxApiCaller {
         clearInterval(myInterval);
       }
       let positionByIndex = self.getAnaPositionByDeviceIndex(platform);
+      platform.log.info('Index '+accessory.context.device.index);
+      platform.log.info(JSON.stringify(positionByIndex));
       if(positionByIndex[accessory.context.device.index] !== undefined){
         let currentPosition = positionByIndex[accessory.context.device.index];
         if(nVal == (100 - currentPosition)){
