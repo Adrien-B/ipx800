@@ -79,24 +79,25 @@ export class IPXV4 implements IpxApiCaller {
     let myInterval = setInterval(function(){ 
       platform.log.info('Begin interval');
       loop++
-      if(loop > 12){
+      if(loop > 6){
         platform.log.info('End too much loop');
         clearInterval(myInterval);
       }
-      let positionByIndex = self.getAnaPositionByDeviceIndex(platform);
-      platform.log.info('Index '+accessory.context.device.index);
-      platform.log.info(JSON.stringify(positionByIndex));
-      if(positionByIndex[accessory.context.device.index] !== undefined){
-        let currentPosition = positionByIndex[accessory.context.device.index];
-        if(nVal == (100 - currentPosition)){
-          platform.log.info('Move ended');
-          platform.updateDevices();
-          clearInterval(myInterval);
-        }else{
-          platform.log.info('Update position');
-          //accessory.getService(platform.Service.WindowCovering).updateCharacteristic(platform.Characteristic.CurrentPosition, 100 - currentPosition);
+      self.getAnaPositionByDeviceIndex(platform).then(positionByIndex => {
+        platform.log.info('Index '+accessory.context.device.index);
+        platform.log.info(JSON.stringify(positionByIndex));
+        if(positionByIndex[accessory.context.device.index] !== undefined){
+          let currentPosition = positionByIndex[accessory.context.device.index];
+          if(nVal == (100 - currentPosition)){
+            platform.log.info('Move ended');
+            platform.updateDevices();
+            clearInterval(myInterval);
+          }else{
+            platform.log.info('Update position');
+            //accessory.getService(platform.Service.WindowCovering).updateCharacteristic(platform.Characteristic.CurrentPosition, 100 - currentPosition);
+          }
         }
-      }
+      })
     },5000)
     return axios.get(url);
   }
