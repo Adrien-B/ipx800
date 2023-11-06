@@ -99,6 +99,7 @@ export class IPXPlatform implements DynamicPlatformPlugin {
       .then(positionByIndex => {
         Promise.all(this.anaDevices.map(d => {
           const anaIndex = d.anaIndex || d.index;
+          this.log.info('Search index '+anaIndex.toUpperCase());
           if (positionByIndex[anaIndex.toUpperCase()] !== undefined) {
             d.updateAnaValue(positionByIndex[anaIndex.toUpperCase()]);
           }
