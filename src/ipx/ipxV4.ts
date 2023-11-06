@@ -27,7 +27,6 @@ export class IPXV4 implements IpxApiCaller {
     const api = platform.config['api'];
     const url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Get=all ';
     return axios.get(url).then(ipxInfo => {
-      platform.log.info(JSON.stringify(ipxInfo.data));
       const positionByIndex = new Map<string, number>();
       Object.keys(ipxInfo.data).map(key => {
         if (key.startsWith('G')) {
@@ -37,9 +36,8 @@ export class IPXV4 implements IpxApiCaller {
         } else if (key.startsWith('VR')) {
           let info = key.replace('VR','').split('-')
           if(info.length == 2){
-            let vrkey = 'VR'+String(parseInt(info[0])*parseInt(info[1])).padStart(2, "0");
+            let vrkey = 'VR'+String((parseInt(info[0])-1)*4+parseInt(info[1])).padStart(2, "0");
             positionByIndex[vrkey] = ipxInfo.data[key];
-            platform.log.info('v4------ '+ vrkey + ' value : ' + ipxInfo.data[key]);
           }
         }
       });
