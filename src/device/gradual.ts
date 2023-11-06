@@ -51,7 +51,7 @@ export class GradualHandler {
     if (this.characteristic === this.platform.Characteristic.CurrentPosition) {
       //if curtain (xv4r) revert position
       this.service.updateCharacteristic(this.characteristic, 100 - value);
-      this.service.updateCharacteristic(this.platform.Characteristic..PositionState, this.platform.Characteristic.PositionState.STOPPED);
+      this.service.updateCharacteristic(this.platform.Characteristic.PositionState, this.platform.Characteristic.PositionState.STOPPED);
     } else {
       this.service.updateCharacteristic(this.characteristic, value);
     }
