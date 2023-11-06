@@ -75,6 +75,7 @@ export class IPXV4 implements IpxApiCaller {
     platform.log.debug('dimmer v4------ '+ accessory.context.device.displayName + ' ---------- on ' + url);
     platform.log.debug('Set Characteristic position -> ', nVal);
     let loop = 0
+    let self = this
     let myInterval = setInterval(function(){ 
       platform.log.info('Begin interval');
       loop++
@@ -82,7 +83,7 @@ export class IPXV4 implements IpxApiCaller {
         platform.log.info('End too much loop');
         clearInterval(myInterval);
       }
-      let positionByIndex = this.getAnaPositionByDeviceIndex(platform);
+      let positionByIndex = self.getAnaPositionByDeviceIndex(platform);
       if(positionByIndex[accessory.context.device.index] !== undefined){
         let currentPosition = positionByIndex[accessory.context.device.index];
         if(nVal == (100 - currentPosition)){
