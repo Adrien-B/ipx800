@@ -37,13 +37,10 @@ export class IPXV4 implements IpxApiCaller {
           let info = key.replace('VR','').split('-')
           if(info.length == 2){
             let vrkey = 'VR'+String(parseInt(info[0])*parseInt(info[1])).padStart(2, "0");
-            platform.log.info('v4------ index  '+ vrkey + ' Value ' + ipxInfo.data[key]);
             positionByIndex[vrkey] = ipxInfo.data[key];
-            platform.log.info('v4------ index2  '+ vrkey + ' Value ' + positionByIndex[String(parseInt(info[0])*parseInt(info[1])).padStart(2, "0")]);
           }
         }
       });
-      platform.log.info('From getAnaPositionByDeviceIndex : '+JSON.stringify(positionByIndex));
       return positionByIndex;
     });
   }
