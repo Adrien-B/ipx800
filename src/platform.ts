@@ -57,11 +57,13 @@ export class IPXPlatform implements DynamicPlatformPlugin {
       this.anaDevices = graduals.concat(anaInputs);
       this.webhookServer.start(this);
 
-      updateDevices();
+      this.updateDevices();
+
+      let self = this
 
       if(this.config.api.pollInterval && this.config.api.pollInterval > 0){
         setInterval(function(){
-          updateDevices();
+          self.updateDevices();
         }, this.config.api.pollInterval * 1000);
       }
     });
