@@ -71,34 +71,38 @@ export class IPXPlatform implements DynamicPlatformPlugin {
 
   deviceExistInConf(device: PlatformAccessory){
     const deviceConf = new DeviceConfReader(this.log, this.config);
-    deviceConf.relays.forEach(d => {
+    for(i = 0; i < deviceConf.relays.length; i++){
+      let d = deviceConf.relays[i]
       this.log.info('Relay '+this.getDeviceUUID(d)+' == '+device.UUID);
       if(this.getDeviceUUID(d) == device.UUID){
         this.log.info('Device found from cache:', device.displayName);
         return true;
       }
-    });
-    deviceConf.graduals.forEach(d => {
+    }
+    for(i = 0; i < deviceConf.graduals.length; i++){
+      let d = deviceConf.graduals[i]
       this.log.info('graduals '+this.getDeviceUUID(d)+' == '+device.UUID);
       if(this.getDeviceUUID(d) == device.UUID){
         this.log.info('Device found from cache:', device.displayName);
         return true;
       }
-    });
-    deviceConf.inputs.forEach(d => {
+    }
+    for(i = 0; i < deviceConf.inputs.length; i++){
+      let d = deviceConf.inputs[i]
       this.log.info('inputs '+this.getDeviceUUID(d)+' == '+device.UUID);
       if(this.getDeviceUUID(d) == device.UUID){
         this.log.info('Device found from cache:', device.displayName);
         return true;
       }
-    });
-    deviceConf.anaInputs.forEach(d => {
+    }
+    for(i = 0; i < deviceConf.anaInputs.length; i++){
+      let d = deviceConf.anaInputs[i]
       this.log.info('anaInputs '+this.getDeviceUUID(d)+' == '+device.UUID);
       if(this.getDeviceUUID(d) == device.UUID){
         this.log.info('Device found from cache:', device.displayName);
         return true;
       }
-    });
+    }
     return false;
   }
 
