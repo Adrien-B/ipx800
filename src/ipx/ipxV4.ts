@@ -8,10 +8,10 @@ import MapUtils from '../utils';
 export class IPXV4 implements IpxApiCaller {
 
   async getStateByDeviceIndex(platform: IPXPlatform): Promise<Map<string, boolean>> {
-    const api = platform.config['api'];
+    let api = platform.config['api'];
     const url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Get=all ';
     return axios.get(url).then(ipxInfo => {
-      const stateByIndex = new Map<string, boolean>();
+      let stateByIndex = new Map<string, boolean>();
       Object.keys(ipxInfo.data).map(key => {
         if (key.startsWith('R') || key.startsWith('V')) {
           stateByIndex[key] = ipxInfo.data[key];
@@ -24,10 +24,10 @@ export class IPXV4 implements IpxApiCaller {
   }
 
   public getAnaPositionByDeviceIndex(platform: IPXPlatform): Promise<Map<string, number>> {
-    const api = platform.config['api'];
-    const url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Get=all ';
+    let api = platform.config['api'];
+    let url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Get=all ';
     return axios.get(url).then(ipxInfo => {
-      const positionByIndex = new Map<string, number>();
+      let positionByIndex = new Map<string, number>();
       Object.keys(ipxInfo.data).map(key => {
         if (key.startsWith('G')) {
           positionByIndex[key] = (ipxInfo.data[key]['Valeur']);
@@ -54,31 +54,31 @@ export class IPXV4 implements IpxApiCaller {
   }
 
   async setOnRelay(value: CharacteristicValue, platform: IPXPlatform, accessory: PlatformAccessory) : Promise<AxiosResponse> {
-    const onType = accessory.context.device.index.charAt(0).toUpperCase() === 'V' ? accessory.context.device.index.slice(0, 2).toUpperCase() : accessory.context.device.index.charAt(0).toUpperCase();
-    const index = accessory.context.device.index.substring(onType.length);
-    const api = platform.config['api'];
+    let onType = accessory.context.device.index.charAt(0).toUpperCase() === 'V' ? accessory.context.device.index.slice(0, 2).toUpperCase() : accessory.context.device.index.charAt(0).toUpperCase();
+    let index = accessory.context.device.index.substring(onType.length);
+    let api = platform.config['api'];
     if (value as boolean){
-      const url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Set' + onType + '=' + index;
+      let url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Set' + onType + '=' + index;
       platform.log.debug('v4------ '+ accessory.context.device.displayName + ' On ---------- url: ' + url);
       return axios.get(url);
     } else {
-      const url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Clear' + onType + '=' + index;
+      let url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Clear' + onType + '=' + index;
       platform.log.debug('v4------ '+ accessory.context.device.displayName + ' Off ---------- url: ' + url);
       return axios.get(url);
     }
   }
 
   async setVRPosition(value: CharacteristicValue, platform: IPXPlatform, accessory: PlatformAccessory): Promise<AxiosResponse> {
-    const nVal = 100 - Math.min(Math.max(value as number, 0), 100);
-    const api = platform.config['api'];
-    const url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Set' + accessory.context.device.index + '=' + nVal;
+    let nVal = 100 - Math.min(Math.max(value as number, 0), 100);
+    let api = platform.config['api'];
+    let url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Set' + accessory.context.device.index + '=' + nVal;
     platform.log.debug('dimmer v4------ '+ accessory.context.device.displayName + ' ---------- on ' + url);
     platform.log.debug('Set Characteristic position -> ', nVal);
     let loop = 0
     let self = this
     let myInterval = setInterval(function(){
       loop++
-      if(loop > 6){
+      if(loop > 15){
         clearInterval(myInterval);
         return;
       }
@@ -89,15 +89,15 @@ export class IPXV4 implements IpxApiCaller {
           return;
         }
       })
-    },5000)
+    },2000)
     return axios.get(url);
   }
 
   async setDimmerPosition(value: CharacteristicValue, platform: IPXPlatform, accessory: PlatformAccessory): Promise<AxiosResponse> {
-    const nVal = Math.min(Math.max(value as number, 0), 100);
-    const api = platform.config['api'];
-    const index = Number(accessory.context.device.index.substring(1));
-    const url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&SetG' + ~~(index/5) + (index%5) + '=' + nVal;
+    let nVal = Math.min(Math.max(value as number, 0), 100);
+    let api = platform.config['api'];
+    let index = Number(accessory.context.device.index.substring(1));
+    let url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&SetG' + ~~(index/5) + (index%5) + '=' + nVal;
     platform.log.debug('dimmer v4------ '+ accessory.context.device.displayName + ' ---------- on ' + url);
     return axios.get(url);
   }
