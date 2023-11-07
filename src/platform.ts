@@ -72,25 +72,28 @@ export class IPXPlatform implements DynamicPlatformPlugin {
   deviceExistInConf(device: PlatformAccessory){
     const deviceConf = new DeviceConfReader(this.log, this.config);
     deviceConf.relays.forEach(d => {
-      this.log.info(this.getDeviceUUID(d)+' == '+device.UUID);
+      this.log.info('Relay '+this.getDeviceUUID(d)+' == '+device.UUID);
       if(this.getDeviceUUID(d) == device.UUID){
         this.log.info('Device found from cache:', device.displayName);
         return true;
       }
     });
     deviceConf.graduals.forEach(d => {
+      this.log.info('graduals '+this.getDeviceUUID(d)+' == '+device.UUID);
       if(this.getDeviceUUID(d) == device.UUID){
         this.log.info('Device found from cache:', device.displayName);
         return true;
       }
     });
     deviceConf.inputs.forEach(d => {
+      this.log.info('inputs '+this.getDeviceUUID(d)+' == '+device.UUID);
       if(this.getDeviceUUID(d) == device.UUID){
         this.log.info('Device found from cache:', device.displayName);
         return true;
       }
     });
     deviceConf.anaInputs.forEach(d => {
+      this.log.info('anaInputs '+this.getDeviceUUID(d)+' == '+device.UUID);
       if(this.getDeviceUUID(d) == device.UUID){
         this.log.info('Device found from cache:', device.displayName);
         return true;
