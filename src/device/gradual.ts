@@ -50,6 +50,7 @@ export class GradualHandler {
   async updateAnaValue(value: number){
     if (this.characteristic === this.platform.Characteristic.CurrentPosition) {
       if(this.service.getCharacteristic(this.characteristic).value != (100 - value)){
+        this.platform.log.debug('Value change  : '+this.service.getCharacteristic(this.characteristic).value+' != '+(100 - value));
         this.service.updateCharacteristic(this.characteristic, 100 - value);
         this.service.updateCharacteristic(this.platform.Characteristic.PositionState, this.platform.Characteristic.PositionState.STOPPED);
         this.service.updateCharacteristic(this.platform.Characteristic.TargetPosition, 100 - value);
