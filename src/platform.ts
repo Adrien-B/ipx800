@@ -102,7 +102,10 @@ export class IPXPlatform implements DynamicPlatformPlugin {
       this.accessories.push(device);
     }else{
       this.log.info('Remove device :', device.displayName);
-      this.homebridgeAPI.unregisterPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [device]);
+      const uuidSeed = device.displayName.replace(/\s/g, '') + '-' + device.index;
+      const uuid = this.homebridgeAPI.hap.uuid.generate(uuidSeed);
+      const accessory = this.accessories.find(accessory => accessory.UUID === uuid);
+      this.homebridgeAPI.unregisterPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
     }
   }
 
