@@ -72,22 +72,22 @@ export class IPXPlatform implements DynamicPlatformPlugin {
   deviceExistInConf(device: PlatformAccessory){
     const deviceConf = new DeviceConfReader(this.log, this.config);
     deviceConf.relays.forEach(d => {
-      if(d.displayName == device.displayName){
+      if(this.getDeviceUUID(d) == device.UUID){
         return true;
       }
     });
     deviceConf.graduals.forEach(d => {
-      if(d.displayName == device.displayName){
+      if(this.getDeviceUUID(d) == device.UUID){
         return true;
       }
     });
     deviceConf.inputs.forEach(d => {
-      if(d.displayName == device.displayName){
+      if(this.getDeviceUUID(d) == device.UUID){
         return true;
       }
     });
     deviceConf.anaInputs.forEach(d => {
-      if(d.displayName == device.displayName){
+      if(this.getDeviceUUID(d) == device.UUID){
         return true;
       }
     });
@@ -146,12 +146,16 @@ export class IPXPlatform implements DynamicPlatformPlugin {
     });
   }
 
+  getDeviceUUID(device: Device){
+    const uuidSeed = device.displayName.replace(/\s/g, '') + '-' + device.index;
+    return this.homebridgeAPI.hap.uuid.generate(uuidSeed);
+  }
+
   findOrCreate(
     device: Device,
     builder: (device: PlatformAccessory) => IODeviceHandler | AnaDeviceHandler,
   ):IODeviceHandler | AnaDeviceHandler {
-    const uuidSeed = device.displayName.replace(/\s/g, '') + '-' + device.index;
-    const uuid = this.homebridgeAPI.hap.uuid.generate(uuidSeed);
+    const uuid = this.getDeviceUUID(device);
 
     const existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid);
 
