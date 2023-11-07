@@ -18,6 +18,15 @@
             "default": "v4",
             "enum": ["v4", "v5"],
             "required": true
+        },
+        "pollInterval": {
+          "type": "number"
+        },
+        "webhookPort": {
+          "type": "number"
+        },
+        "webhookPath": {
+          "type": "string"
         }
       }    
     },
