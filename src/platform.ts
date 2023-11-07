@@ -69,43 +69,45 @@ export class IPXPlatform implements DynamicPlatformPlugin {
     });
   }
 
+  deviceExistInConf(device: PlatformAccessory){
+    const deviceConf = new DeviceConfReader(this.log, this.config);
+    deviceConf.relays.forEach(d => {
+      if(d.displayName == device.displayName){
+        return true;
+      }
+    });
+    deviceConf.graduals.forEach(d => {
+      if(d.displayName == device.displayName){
+        return true;
+      }
+    });
+    deviceConf.inputs.forEach(d => {
+      if(d.displayName == device.displayName){
+        return true;
+      }
+    });
+    deviceConf.anaInputs.forEach(d => {
+      if(d.displayName == device.displayName){
+        return true;
+      }
+    });
+    return false;
+  }
+
   /**
    * This function is invoked when homebridge restores cached accessories from disk at startup.
    * It should be used to setup event handlers for characteristics and update respective values.
    */
   configureAccessory(device: PlatformAccessory) {
     const deviceConf = new DeviceConfReader(this.log, this.config);
-    let deviceFound = false;
     this.log.info('Check accessory from cache:', device.displayName);
-    deviceConf.relays.forEach(d => {
-      if(d.displayName == device.displayName){
-        deviceFound = true
-      }
-    });
-    deviceConf.graduals.forEach(d => {
-      if(d.displayName == device.displayName){
-        deviceFound = true
-      }
-    });
-    deviceConf.inputs.forEach(d => {
-      if(d.displayName == device.displayName){
-        deviceFound = true
-      }
-    });
-    deviceConf.anaInputs.forEach(d => {
-      if(d.displayName == device.displayName){
-        deviceFound = true
-      }
-    });
-    if(deviceFound){
+    
+    if(this.deviceExistInConf(device)){
       this.log.info('Device exist in conf loading from cache:', device.displayName);
       this.accessories.push(device);
     }else{
-      this.log.info('Remove device :', device.displayName);
-      const uuidSeed = device.displayName.replace(/\s/g, '') + '-' + device.index;
-      const uuid = this.homebridgeAPI.hap.uuid.generate(uuidSeed);
-      const accessory = this.accessories.find(accessory => accessory.UUID === uuid);
-      this.homebridgeAPI.unregisterPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
+      this.log.info('Remove device :', device);
+     // this.homebridgeAPI.unregisterPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
     }
   }
 
