@@ -74,8 +74,32 @@ export class IPXPlatform implements DynamicPlatformPlugin {
    * It should be used to setup event handlers for characteristics and update respective values.
    */
   configureAccessory(device: PlatformAccessory) {
+    const deviceConf = new DeviceConfReader(this.log, this.config);
+    let deviceFound = false;
     this.log.info('Loading accessory from cache:', device.displayName);
-    this.accessories.push(device);
+    deviceConf.relays.forEach(d => {
+      if(d.displayName == device.displayName){
+        deviceFound = true
+      }
+    });
+    deviceConf.graduals.forEach(d => {
+      if(d.displayName == device.displayName){
+        deviceFound = true
+      }
+    });
+    deviceConf.inputs.forEach(d => {
+      if(d.displayName == device.displayName){
+        deviceFound = true
+      }
+    });
+    deviceConf.anaInputs.forEach(d => {
+      if(d.displayName == device.displayName){
+        deviceFound = true
+      }
+    });
+    if(deviceFound){
+      this.accessories.push(device);
+    }
   }
 
   updateDevices() {
