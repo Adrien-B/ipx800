@@ -20,13 +20,15 @@
             "required": true
         },
         "pollInterval": {
-          "type": "number"
+          "type": "number",
+          "default": 60
         },
         "webhookPort": {
           "type": "number"
         },
         "webhookPath": {
-          "type": "string"
+          "type": "string",
+          "default": ""
         }
       }    
     },
