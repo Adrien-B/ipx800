@@ -71,7 +71,7 @@ export class IPXPlatform implements DynamicPlatformPlugin {
 
   deviceExistInConf(device: PlatformAccessory){
     const deviceConf = new DeviceConfReader(this.log, this.config);
-    for(i = 0; i < deviceConf.relays.length; i++){
+    for(let i = 0; i < deviceConf.relays.length; i++){
       let d = deviceConf.relays[i]
       this.log.info('Relay '+this.getDeviceUUID(d)+' == '+device.UUID);
       if(this.getDeviceUUID(d) == device.UUID){
@@ -79,7 +79,7 @@ export class IPXPlatform implements DynamicPlatformPlugin {
         return true;
       }
     }
-    for(i = 0; i < deviceConf.graduals.length; i++){
+    for(let i = 0; i < deviceConf.graduals.length; i++){
       let d = deviceConf.graduals[i]
       this.log.info('graduals '+this.getDeviceUUID(d)+' == '+device.UUID);
       if(this.getDeviceUUID(d) == device.UUID){
@@ -87,7 +87,7 @@ export class IPXPlatform implements DynamicPlatformPlugin {
         return true;
       }
     }
-    for(i = 0; i < deviceConf.inputs.length; i++){
+    for(let i = 0; i < deviceConf.inputs.length; i++){
       let d = deviceConf.inputs[i]
       this.log.info('inputs '+this.getDeviceUUID(d)+' == '+device.UUID);
       if(this.getDeviceUUID(d) == device.UUID){
@@ -95,7 +95,7 @@ export class IPXPlatform implements DynamicPlatformPlugin {
         return true;
       }
     }
-    for(i = 0; i < deviceConf.anaInputs.length; i++){
+    for(let i = 0; i < deviceConf.anaInputs.length; i++){
       let d = deviceConf.anaInputs[i]
       this.log.info('anaInputs '+this.getDeviceUUID(d)+' == '+device.UUID);
       if(this.getDeviceUUID(d) == device.UUID){
