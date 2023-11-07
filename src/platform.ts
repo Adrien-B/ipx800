@@ -102,7 +102,7 @@ export class IPXPlatform implements DynamicPlatformPlugin {
       this.accessories.push(device);
     }else{
       this.log.info('Remove device :', device.displayName);
-      this.api.unregisterPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [device]);
+      this.homebridgeAPI.unregisterPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [device]);
     }
   }
 
