@@ -62,7 +62,9 @@ export class RelayHandler {
     }
   }
 
-  public updateIO(state: boolean){
-    this.service.updateCharacteristic(this.platform.Characteristic.On, state);
+  public updateIO(value: boolean){
+    if(this.service.getCharacteristic(this.platform.Characteristic.On).value != value){
+      this.service.updateCharacteristic(this.platform.Characteristic.On, value);
+    }
   }
 }

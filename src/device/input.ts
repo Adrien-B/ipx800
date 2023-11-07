@@ -38,7 +38,9 @@ export class InputHandler {
     this.service.setCharacteristic(this.platform.Characteristic.Name, accessory.context.device.displayName);
   }
 
-  public updateIO(state: boolean){
-    this.service.updateCharacteristic(this.characteristic, state);
+  public updateIO(value: boolean){
+    if(this.service.getCharacteristic(this.characteristic).value != value){
+      this.service.updateCharacteristic(this.characteristic, value);
+    }
   }
 }

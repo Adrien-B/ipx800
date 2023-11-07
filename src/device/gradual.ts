@@ -55,11 +55,15 @@ export class GradualHandler {
         this.service.updateCharacteristic(this.platform.Characteristic.TargetPosition, 100 - value);
       }
     } else {
-      this.service.updateCharacteristic(this.characteristic, value);
+      if(this.service.getCharacteristic(this.characteristic).value != value){
+        this.service.updateCharacteristic(this.characteristic, value);
+      }
     }
   }
 
   async updateIO(value: boolean){
-    this.service.updateCharacteristic(this.platform.Characteristic.On, value);
+    if(this.service.getCharacteristic(this.platform.Characteristic.On).value != value){
+      this.service.updateCharacteristic(this.platform.Characteristic.On, value);
+    }
   }
 }
