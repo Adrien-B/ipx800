@@ -101,6 +101,7 @@ export class IPXPlatform implements DynamicPlatformPlugin {
       this.log.info('Device exist in conf loading from cache:', device.displayName);
       this.accessories.push(device);
     }else{
+      this.log.info('Remove device :', device.displayName);
       this.api.unregisterPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [device]);
     }
   }
