@@ -76,7 +76,7 @@ export class IPXPlatform implements DynamicPlatformPlugin {
   configureAccessory(device: PlatformAccessory) {
     const deviceConf = new DeviceConfReader(this.log, this.config);
     let deviceFound = false;
-    this.log.info('Loading accessory from cache:', device.displayName);
+    this.log.info('Check accessory from cache:', device.displayName);
     deviceConf.relays.forEach(d => {
       if(d.displayName == device.displayName){
         deviceFound = true
@@ -98,6 +98,7 @@ export class IPXPlatform implements DynamicPlatformPlugin {
       }
     });
     if(deviceFound){
+      this.log.info('Device exist in conf loading from cache:', device.displayName);
       this.accessories.push(device);
     }
   }
