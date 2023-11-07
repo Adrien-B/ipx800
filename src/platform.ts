@@ -67,51 +67,13 @@ export class IPXPlatform implements DynamicPlatformPlugin {
     });
   }
 
-  deviceExistInConf(device: PlatformAccessory){
-    const deviceConf = new DeviceConfReader(this.log, this.config);
-    for(let i = 0; i < deviceConf.relays.length; i++){
-      let d = deviceConf.relays[i]
-      if(this.getDeviceUUID(d) == device.UUID){
-        return true;
-      }
-    }
-    for(let i = 0; i < deviceConf.graduals.length; i++){
-      let d = deviceConf.graduals[i]
-      if(this.getDeviceUUID(d) == device.UUID){
-        return true;
-      }
-    }
-    for(let i = 0; i < deviceConf.inputs.length; i++){
-      let d = deviceConf.inputs[i]
-      if(this.getDeviceUUID(d) == device.UUID){
-        return true;
-      }
-    }
-    for(let i = 0; i < deviceConf.anaInputs.length; i++){
-      let d = deviceConf.anaInputs[i]
-      if(this.getDeviceUUID(d) == device.UUID){
-        return true;
-      }
-    }
-    return false;
-  }
-
   /**
    * This function is invoked when homebridge restores cached accessories from disk at startup.
    * It should be used to setup event handlers for characteristics and update respective values.
    */
   configureAccessory(device: PlatformAccessory) {
     let deviceConf = new DeviceConfReader(this.log, this.config);
-    this.log.info('Check accessory from cache:', device.displayName);
-    
-    if(this.deviceExistInConf(device)){
-      this.log.info('Device exist in conf loading from cache:', device.displayName);
-      this.accessories.push(device);
-    }else{
-      this.log.info('Remove device :', device);
-      let accessory = new this.homebridgeAPI.platformAccessory(device.displayName, device.UUID);
-      this.homebridgeAPI.unregisterPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
-    }
+    this.accessories.push(device);
   }
 
   updateDevices() {
