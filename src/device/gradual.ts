@@ -49,10 +49,13 @@ export class GradualHandler {
 
   async updateAnaValue(value: number){
     if (this.characteristic === this.platform.Characteristic.CurrentPosition) {
-      //if curtain (xv4r) revert position
-      this.service.updateCharacteristic(this.characteristic, 100 - value);
-      this.service.updateCharacteristic(this.platform.Characteristic.PositionState, this.platform.Characteristic.PositionState.STOPPED);
-      this.service.updateCharacteristic(this.platform.Characteristic.TargetPosition, 100 - value);
+      if(this.service.setCharacteristic(this.characteristic).value == (100 - value)){
+        this.service.updateCharacteristic(this.characteristic, 100 - value);
+        this.service.updateCharacteristic(this.platform.Characteristic.PositionState, this.platform.Characteristic.PositionState.STOPPED);
+        this.service.updateCharacteristic(this.platform.Characteristic.TargetPosition, 100 - value);
+      }else{
+        this.platform.log.debug('No update because no value change');
+      }
     } else {
       this.service.updateCharacteristic(this.characteristic, value);
     }
