@@ -54,6 +54,9 @@ export class GradualHandler {
         this.service.updateCharacteristic(this.platform.Characteristic.PositionState, this.platform.Characteristic.PositionState.STOPPED);
         this.service.updateCharacteristic(this.platform.Characteristic.TargetPosition, 100 - value);
       }
+      if(this.service.getCharacteristic(this.platform.Characteristic.PositionState).value != this.platform.Characteristic.PositionState.STOPPED){
+        this.service.updateCharacteristic(this.platform.Characteristic.PositionState, this.platform.Characteristic.PositionState.STOPPED);
+      }
     } else {
       if(this.service.getCharacteristic(this.characteristic).value != value){
         this.service.updateCharacteristic(this.characteristic, value);
