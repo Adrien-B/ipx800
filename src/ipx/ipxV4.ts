@@ -45,7 +45,7 @@ export class IPXV4 implements IpxApiCaller {
     });
   }
 
-  async setOnDimmer(value: CharacteristicValue, platform: IPXPlatform, accessory: PlatformAccessory) : Promise<AxiosResponse> {
+  async setOnDimmer(value: CharacteristicValue, platform: IPXPlatform, accessory: PlatformAccessory) {
     if (value as boolean){
       this.setDimmerPosition(101, platform, accessory);
     } else {
@@ -54,7 +54,7 @@ export class IPXV4 implements IpxApiCaller {
     return;
   }
 
-  async setOnRelay(value: CharacteristicValue, platform: IPXPlatform, accessory: PlatformAccessory) : Promise<AxiosResponse> {
+  async setOnRelay(value: CharacteristicValue, platform: IPXPlatform, accessory: PlatformAccessory) {
     let onType = accessory.context.device.index.charAt(0).toUpperCase() === 'V' ? accessory.context.device.index.slice(0, 2).toUpperCase() : accessory.context.device.index.charAt(0).toUpperCase();
     let index = accessory.context.device.index.substring(onType.length);
     let api = platform.config['api'];
@@ -70,7 +70,7 @@ export class IPXV4 implements IpxApiCaller {
     return;
   }
 
-  async setVRPosition(value: CharacteristicValue, platform: IPXPlatform, accessory: PlatformAccessory): Promise<AxiosResponse> {
+  async setVRPosition(value: CharacteristicValue, platform: IPXPlatform, accessory: PlatformAccessory) {
     let nVal = 100 - Math.min(Math.max(value as number, 0), 100);
     let api = platform.config['api'];
     let url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Set' + accessory.context.device.index + '=' + nVal;
@@ -96,7 +96,7 @@ export class IPXV4 implements IpxApiCaller {
     return;
   }
 
-  async setDimmerPosition(value: CharacteristicValue, platform: IPXPlatform, accessory: PlatformAccessory): Promise<AxiosResponse> {
+  async setDimmerPosition(value: CharacteristicValue, platform: IPXPlatform, accessory: PlatformAccessory) {
     let nVal = Math.min(Math.max(value as number, 0), 100);
     let api = platform.config['api'];
     let index = Number(accessory.context.device.index.substring(1));

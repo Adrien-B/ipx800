@@ -23,12 +23,12 @@ export class IPXV5 implements IpxApiCaller{
     });
   }
 
-  async setOnDimmer(value: CharacteristicValue, platform: IPXPlatform, accessory: PlatformAccessory) : Promise<AxiosResponse> {
+  async setOnDimmer(value: CharacteristicValue, platform: IPXPlatform, accessory: PlatformAccessory) {
     this.setOnRelay(value, platform, accessory);
     return;
   }
 
-  async setOnRelay(value: CharacteristicValue, platform: IPXPlatform, accessory: PlatformAccessory) : Promise<AxiosResponse> {
+  async setOnRelay(value: CharacteristicValue, platform: IPXPlatform, accessory: PlatformAccessory) {
     const api = platform.config['api'];
     const url = 'http://' + api.ip + '/api/core/io/' + accessory.context.device.index + '?ApiKey=' + api.key ;
     platform.log.debug('Set Characteristic On ->', value);
@@ -44,17 +44,17 @@ export class IPXV5 implements IpxApiCaller{
     return;
   }
 
-  async setVRPosition(value: CharacteristicValue, platform: IPXPlatform, accessory: PlatformAccessory) : Promise<AxiosResponse> {
+  async setVRPosition(value: CharacteristicValue, platform: IPXPlatform, accessory: PlatformAccessory) {
     this.setAnaPosition(100 - (value as number), platform, accessory);
     return;
   }
 
-  async setDimmerPosition(value: CharacteristicValue, platform: IPXPlatform, accessory: PlatformAccessory) : Promise<AxiosResponse> {
+  async setDimmerPosition(value: CharacteristicValue, platform: IPXPlatform, accessory: PlatformAccessory) {
     this.setAnaPosition(100 - (value as number), platform, accessory);
     return;
   }
 
-  async setAnaPosition(value: CharacteristicValue, platform: IPXPlatform, accessory: PlatformAccessory) : Promise<AxiosResponse> {
+  async setAnaPosition(value: CharacteristicValue, platform: IPXPlatform, accessory: PlatformAccessory) {
     const nVal = Math.min(Math.max(value as number, 0), 100);
     const api = platform.config['api'];
     const url = 'http://' + api.ip + '/api/core/ana/' + accessory.context.device.anaIndex + '?ApiKey=' + api.key ;
