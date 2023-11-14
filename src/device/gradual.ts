@@ -27,6 +27,9 @@ export class GradualHandler {
         this.service.setCharacteristic(this.platform.Characteristic.Name, accessory.context.device.displayName);
         this.service.getCharacteristic(this.platform.Characteristic.TargetPosition).onSet((v) => ipx.setVRPosition(v, this.platform, this.accessory));
         this.characteristic = this.platform.Characteristic.CurrentPosition; //but onSet is TargetPosition
+        this.service.getCharacteristic(this.platform.Characteristic.CurrentPosition).onGet(this.handleOnGetPosition.bind(this))
+        this.service.getCharacteristic(this.platform.Characteristic.TargetPosition).onGet(this.handleOnGetPosition.bind(this))
+        this.service.getCharacteristic(this.platform.Characteristic.PositionState).onGet(this.handleOnGetPositionState.bind(this))
         break;
       }
       case 'fan': {
@@ -48,9 +51,14 @@ export class GradualHandler {
     }
   }
 
-  public handleOnGet() {
-    this.platform.log.debug('Triggered GET graduals');
+  public handleOnGetPosition() {
+    this.platform.log.debug('Triggered GET position');
     return this.state;
+  }
+
+  public handleOnGetPositionState() {
+    this.platform.log.debug('Triggered GET position state');
+    return this.platform.Characteristic.PositionState.STOPPED;
   }
 
   async updateAnaValue(value: number){
