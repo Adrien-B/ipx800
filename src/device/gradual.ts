@@ -9,6 +9,7 @@ export class GradualHandler {
   public readonly anaIndex: string = this.accessory.context.device.anaIndex;
   private service: Service;
   private readonly characteristic;
+  private state;
 
   constructor(
     private readonly platform: IPXPlatform,
@@ -47,8 +48,14 @@ export class GradualHandler {
     }
   }
 
+  public handleOnGet() {
+    this.platform.log.debug('Triggered GET graduals');
+    return this.state;
+  }
+
   async updateAnaValue(value: number){
     if (this.characteristic === this.platform.Characteristic.CurrentPosition) {
+      this.state = 100 - value;
       if(this.service.getCharacteristic(this.characteristic).value != (100 - value)){
         this.service.updateCharacteristic(this.characteristic, 100 - value);
         this.service.updateCharacteristic(this.platform.Characteristic.PositionState, this.platform.Characteristic.PositionState.STOPPED);
@@ -58,6 +65,7 @@ export class GradualHandler {
         this.service.updateCharacteristic(this.platform.Characteristic.PositionState, this.platform.Characteristic.PositionState.STOPPED);
       }
     } else {
+      this.state = value;
       if(this.service.getCharacteristic(this.characteristic).value != value){
         this.service.updateCharacteristic(this.characteristic, value);
       }
@@ -65,6 +73,7 @@ export class GradualHandler {
   }
 
   async updateIO(value: boolean){
+    this.state = value;
     if(this.service.getCharacteristic(this.platform.Characteristic.On).value != value){
       this.service.updateCharacteristic(this.platform.Characteristic.On, value);
     }

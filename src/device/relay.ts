@@ -7,6 +7,7 @@ import { IpxApiCaller } from '../ipx/api';
 export class RelayHandler {
   public readonly index: string = this.accessory.context.device.index;
   private readonly service: Service;
+  private state;
 
   constructor(
     private readonly platform: IPXPlatform,
@@ -60,9 +61,16 @@ export class RelayHandler {
         }
       });
     }
+    this.service.getCharacteristic(this.platform.Characteristic.On).onGet(this.handleOnGet.bind(this))
+  }
+
+  public handleOnGet() {
+    this.platform.log.debug('Triggered GET relay');
+    return this.state;
   }
 
   public updateIO(value: boolean){
+    this.state = value;
     if(this.service.getCharacteristic(this.platform.Characteristic.On).value != value){
       this.service.updateCharacteristic(this.platform.Characteristic.On, value);
     }
