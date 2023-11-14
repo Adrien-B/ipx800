@@ -47,10 +47,11 @@ export class IPXV4 implements IpxApiCaller {
 
   async setOnDimmer(value: CharacteristicValue, platform: IPXPlatform, accessory: PlatformAccessory) : Promise<AxiosResponse> {
     if (value as boolean){
-      return this.setDimmerPosition(101, platform, accessory);
+      this.setDimmerPosition(101, platform, accessory);
     } else {
-      return this.setDimmerPosition(0, platform, accessory);
+      this.setDimmerPosition(0, platform, accessory);
     }
+    return;
   }
 
   async setOnRelay(value: CharacteristicValue, platform: IPXPlatform, accessory: PlatformAccessory) : Promise<AxiosResponse> {
@@ -60,12 +61,13 @@ export class IPXV4 implements IpxApiCaller {
     if (value as boolean){
       let url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Set' + onType + '=' + index;
       platform.log.debug('v4------ '+ accessory.context.device.displayName + ' On ---------- url: ' + url);
-      return axios.get(url);
+      axios.get(url);
     } else {
       let url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Clear' + onType + '=' + index;
       platform.log.debug('v4------ '+ accessory.context.device.displayName + ' Off ---------- url: ' + url);
-      return axios.get(url);
+      axios.get(url);
     }
+    return;
   }
 
   async setVRPosition(value: CharacteristicValue, platform: IPXPlatform, accessory: PlatformAccessory): Promise<AxiosResponse> {
@@ -90,7 +92,8 @@ export class IPXV4 implements IpxApiCaller {
         }
       })
     },2000)
-    return axios.get(url);
+    axios.get(url);
+    return;
   }
 
   async setDimmerPosition(value: CharacteristicValue, platform: IPXPlatform, accessory: PlatformAccessory): Promise<AxiosResponse> {
@@ -99,7 +102,8 @@ export class IPXV4 implements IpxApiCaller {
     let index = Number(accessory.context.device.index.substring(1));
     let url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&SetG' + ~~(index/5) + (index%5) + '=' + nVal;
     platform.log.debug('dimmer v4------ '+ accessory.context.device.displayName + ' ---------- on ' + url);
-    return axios.get(url);
+    axios.get(url);
+    return;
   }
 
 }
