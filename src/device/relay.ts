@@ -61,12 +61,6 @@ export class RelayHandler {
         }
       });
     }
-    this.service.getCharacteristic(this.platform.Characteristic.On).onGet(this.handleOnGet.bind(this))
-  }
-
-  public handleOnGet() {
-    this.platform.log.debug('Triggered GET relay');
-    return this.state;
   }
 
   public updateIO(value: boolean){
