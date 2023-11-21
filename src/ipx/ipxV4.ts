@@ -58,6 +58,12 @@ export class IPXV4 implements IpxApiCaller {
     let onType = accessory.context.device.index.charAt(0).toUpperCase() === 'V' ? accessory.context.device.index.slice(0, 2).toUpperCase() : accessory.context.device.index.charAt(0).toUpperCase();
     let index = accessory.context.device.index.substring(onType.length);
     let api = platform.config['api'];
+    if(accessory.context.device.type == 'toggle'){
+      let url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Toggle' + onType + '=' + index;
+      platform.log.debug('v4------ '+ accessory.context.device.displayName + ' On ---------- url: ' + url);
+      axios.get(url);
+      return;
+    }
     if (value as boolean){
       let url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Set' + onType + '=' + index;
       platform.log.debug('v4------ '+ accessory.context.device.displayName + ' On ---------- url: ' + url);

@@ -24,6 +24,10 @@ export class RelayHandler {
         this.service = this.accessory.getService(this.platform.Service.Switch) || this.accessory.addService(this.platform.Service.Switch);
         break;
       }
+      case 'toggle': {
+        this.service = this.accessory.getService(this.platform.Service.Switch) || this.accessory.addService(this.platform.Service.Switch);
+        break;
+      }
       case 'switch': {
         this.service = this.accessory.getService(this.platform.Service.Switch) || this.accessory.addService(this.platform.Service.Switch);
         break;
@@ -64,9 +68,13 @@ export class RelayHandler {
   }
 
   public updateIO(value: boolean){
-    this.state = value;
-    if(this.service.getCharacteristic(this.platform.Characteristic.On).value != value){
-      this.service.updateCharacteristic(this.platform.Characteristic.On, value);
+    if(this.accessory.context.device.type == 'toggle'){
+      this.service.updateCharacteristic(this.platform.Characteristic.On, false);
+    }else{
+      this.state = value;
+      if(this.service.getCharacteristic(this.platform.Characteristic.On).value != value){
+        this.service.updateCharacteristic(this.platform.Characteristic.On, value);
+      }
     }
   }
 }
