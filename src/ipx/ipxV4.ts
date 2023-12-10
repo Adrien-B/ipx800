@@ -119,10 +119,11 @@ export class IPXV4 implements IpxApiCaller {
     retry++;
     if(retry > 5){
       platform.log.error('Fail after 5 try on : '+url);
+      return;
     }
     axios.get(url).then(response => {
       if(response?.data?.status != 'Success'){
-        platform.log.error('(Retry) Error on : '+url+' result : ',response);
+        platform.log.error('(Retry) Error on : '+url+' result : ',response?.data);
         setTimeout(() => {
           this.sendOrder(url,platform,retry);
         }, 100 * retry);
