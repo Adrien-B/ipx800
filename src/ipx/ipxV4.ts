@@ -124,13 +124,13 @@ export class IPXV4 implements IpxApiCaller {
       if(response?.data?.status != 'Success'){
         platform.log.error('(Retry) Error on : '+url+' result : ',response);
         setTimeout(() => {
-          sendOrder(url,retry);
+          this.sendOrder(url,retry);
         }, 100 * retry);
       }
     }).catch(error => {
       platform.log.error('(Retry) Error on : '+url);
       setTimeout(() => {
-        sendOrder(url,retry);
+        this.sendOrder(url,retry);
       }, 100 * retry);
     });
   }
