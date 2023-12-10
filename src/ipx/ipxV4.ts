@@ -61,17 +61,17 @@ export class IPXV4 implements IpxApiCaller {
     if(accessory.context.device.type == 'toggle'){
       let url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Toggle' + onType + '=' + index;
       platform.log.debug('v4------ '+ accessory.context.device.displayName + ' On ---------- url: ' + url);
-      this.sendOrder(url);
+      this.sendOrder(url,platform);
       return;
     }
     if (value as boolean){
       let url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Set' + onType + '=' + index;
       platform.log.debug('v4------ '+ accessory.context.device.displayName + ' On ---------- url: ' + url);
-      this.sendOrder(url);
+      this.sendOrder(url,platform);
     } else {
       let url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Clear' + onType + '=' + index;
       platform.log.debug('v4------ '+ accessory.context.device.displayName + ' Off ---------- url: ' + url);
-      this.sendOrder(url);
+      this.sendOrder(url,platform);
     }
     return;
   }
@@ -98,7 +98,7 @@ export class IPXV4 implements IpxApiCaller {
         }
       })
     },2000)
-    this.sendOrder(url);
+    this.sendOrder(url,platform);
     return;
   }
 
@@ -108,11 +108,11 @@ export class IPXV4 implements IpxApiCaller {
     let index = Number(accessory.context.device.index.substring(1));
     let url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&SetG' + ~~(index/5) + (index%5) + '=' + nVal;
     platform.log.debug('dimmer v4------ '+ accessory.context.device.displayName + ' ---------- on ' + url);
-    this.sendOrder(url);
+    this.sendOrder(url,platform);
     return;
   }
 
-  public sendOrder(url, retry){
+  public sendOrder(url,platform, retry){
     if(!retry){
       retry = 0;
     }
@@ -124,13 +124,13 @@ export class IPXV4 implements IpxApiCaller {
       if(response?.data?.status != 'Success'){
         platform.log.error('(Retry) Error on : '+url+' result : ',response);
         setTimeout(() => {
-          this.sendOrder(url,retry);
+          this.sendOrder(url,platform,retry);
         }, 100 * retry);
       }
     }).catch(error => {
       platform.log.error('(Retry) Error on : '+url);
       setTimeout(() => {
-        this.sendOrder(url,retry);
+        this.sendOrder(url,platform,retry);
       }, 100 * retry);
     });
   }
