@@ -123,13 +123,13 @@ export class IPXV4 implements IpxApiCaller {
     }
     axios.get(url).then(response => {
       if(response?.data?.status != 'Success'){
-        platform.log.error('(Retry) Error on : '+url+' result : ',response?.data);
+        platform.log.error('(Retry '+retry+') Error on : '+url+' result : ',response?.data);
         setTimeout(() => {
           this.sendOrder(url,platform,retry);
         }, 100 * retry);
       }
     }).catch(error => {
-      platform.log.error('(Retry) Error on : '+url);
+      platform.log.error('(Retry '+retry+') Error on : '+url);
       setTimeout(() => {
         this.sendOrder(url,platform,retry);
       }, 100 * retry);
