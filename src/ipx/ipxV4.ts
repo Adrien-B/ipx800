@@ -61,17 +61,17 @@ export class IPXV4 implements IpxApiCaller {
     if(accessory.context.device.type == 'toggle'){
       let url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Toggle' + onType + '=' + index;
       platform.log.debug('v4------ '+ accessory.context.device.displayName + ' On ---------- url: ' + url);
-      sendOrder(url);
+      this.sendOrder(url);
       return;
     }
     if (value as boolean){
       let url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Set' + onType + '=' + index;
       platform.log.debug('v4------ '+ accessory.context.device.displayName + ' On ---------- url: ' + url);
-      sendOrder(url);
+      this.sendOrder(url);
     } else {
       let url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Clear' + onType + '=' + index;
       platform.log.debug('v4------ '+ accessory.context.device.displayName + ' Off ---------- url: ' + url);
-      sendOrder(url);
+      this.sendOrder(url);
     }
     return;
   }
@@ -98,7 +98,7 @@ export class IPXV4 implements IpxApiCaller {
         }
       })
     },2000)
-    sendOrder(url);
+    this.sendOrder(url);
     return;
   }
 
@@ -108,7 +108,7 @@ export class IPXV4 implements IpxApiCaller {
     let index = Number(accessory.context.device.index.substring(1));
     let url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&SetG' + ~~(index/5) + (index%5) + '=' + nVal;
     platform.log.debug('dimmer v4------ '+ accessory.context.device.displayName + ' ---------- on ' + url);
-    sendOrder(url);
+    this.sendOrder(url);
     return;
   }
 
