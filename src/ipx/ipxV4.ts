@@ -60,7 +60,7 @@ export class IPXV4 implements IpxApiCaller {
     let api = platform.config['api'];
     if(accessory.context.device.type == 'toggle'){
       let url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Toggle' + onType + '=' + index;
-      platform.log.debug('v4------ '+ accessory.context.device.displayName + ' On ---------- url: ' + url);
+      platform.log.debug('v4------ '+ accessory.context.device.displayName + ' Toogle ---------- url: ' + url);
       this.sendOrder(url,platform,0);
       return;
     }
