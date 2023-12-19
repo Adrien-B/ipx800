@@ -70,7 +70,7 @@ export class IPXV4 implements IpxApiCaller {
       this.sendOrder(url,platform,0);
     } else {
       let url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Clear' + onType + '=' + index;
-      platform.log.debug('v4------ '+ accessory.context.device.displayName + ' Off ---------- url: ' + url);
+      platform.log.error('v4------ '+ accessory.context.device.displayName + ' Off ---------- url: ' + url);
       this.sendOrder(url,platform,0);
     }
     return;
