@@ -60,17 +60,17 @@ export class IPXV4 implements IpxApiCaller {
     let api = platform.config['api'];
     if(accessory.context.device.type == 'toggle'){
       let url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Toggle' + onType + '=' + index;
-      platform.log.debug('v4------ '+ accessory.context.device.displayName + ' Toogle ---------- url: ' + url);
+      platform.log.info('v4------ '+ accessory.context.device.displayName + ' Toogle ---------- url: ' + url);
       this.sendOrder(url,platform,0);
       return;
     }
     if (value as boolean){
       let url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Set' + onType + '=' + index;
-      platform.log.error('v4------ '+ accessory.context.device.displayName + ' On ---------- url: ' + url);
+      platform.log.info('v4------ '+ accessory.context.device.displayName + ' On ---------- url: ' + url);
       this.sendOrder(url,platform,0);
     } else {
       let url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Clear' + onType + '=' + index;
-      platform.log.error('v4------ '+ accessory.context.device.displayName + ' Off ---------- url: ' + url);
+      platform.log.info('v4------ '+ accessory.context.device.displayName + ' Off ---------- url: ' + url);
       this.sendOrder(url,platform,0);
     }
     return;
@@ -80,8 +80,8 @@ export class IPXV4 implements IpxApiCaller {
     let nVal = 100 - Math.min(Math.max(value as number, 0), 100);
     let api = platform.config['api'];
     let url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Set' + accessory.context.device.index + '=' + nVal;
-    platform.log.debug('dimmer v4------ '+ accessory.context.device.displayName + ' ---------- on ' + url);
-    platform.log.debug('Set Characteristic position -> ', nVal);
+    platform.log.info('dimmer v4------ '+ accessory.context.device.displayName + ' ---------- on ' + url);
+    platform.log.info('Set Characteristic position -> ', nVal);
     let loop = 0
     let self = this
     let myInterval = setInterval(function(){
@@ -107,7 +107,7 @@ export class IPXV4 implements IpxApiCaller {
     let api = platform.config['api'];
     let index = Number(accessory.context.device.index.substring(1));
     let url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&SetG' + ~~(index/5) + (index%5) + '=' + nVal;
-    platform.log.debug('dimmer v4------ '+ accessory.context.device.displayName + ' ---------- on ' + url);
+    platform.log.info('dimmer v4------ '+ accessory.context.device.displayName + ' ---------- on ' + url);
     this.sendOrder(url,platform,0);
     return;
   }
@@ -123,13 +123,13 @@ export class IPXV4 implements IpxApiCaller {
     }
     axios.get(url).then(response => {
       if(response?.data?.status != 'Success'){
-        platform.log.error('(Retry '+retry+') Error on : '+url+' result : ',response?.data);
+        platform.log.info('(Retry '+retry+') Error on : '+url+' result : ',response?.data);
         setTimeout(() => {
           this.sendOrder(url,platform,retry);
         }, 100 * retry);
       }
     }).catch(error => {
-      platform.log.error('(Retry '+retry+') Error on : '+url);
+      platform.log.info('(Retry '+retry+') Error on : '+url);
       setTimeout(() => {
         this.sendOrder(url,platform,retry);
       }, 100 * retry);
