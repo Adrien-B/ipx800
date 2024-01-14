@@ -121,6 +121,7 @@ export class IPXV4 implements IpxApiCaller {
       platform.log.error('Fail after 5 try on : '+url);
       return;
     }
+    platform.log.info('Call url -> ', url);
     axios.get(url).then(response => {
       if(response?.data?.status != 'Success'){
         platform.log.info('(Retry '+retry+') Error on : '+url+' result : ',response?.data);
