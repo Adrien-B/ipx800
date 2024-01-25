@@ -128,6 +128,8 @@ export class IPXV4 implements IpxApiCaller {
         setTimeout(() => {
           this.sendOrder(url,platform,retry);
         }, 100 * retry);
+      }else{
+        platform.log.info('Succes on : '+url+' result : ',response?.data);
       }
     }).catch(error => {
       platform.log.info('(Retry '+retry+') Error on : '+url);
