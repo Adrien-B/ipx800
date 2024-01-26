@@ -135,7 +135,7 @@ export class IPXV4 implements IpxApiCaller {
         if(this.verifyTimeout){
           clearTimeout(this.verifyTimeout);
         }
-        this.verifyTimeout = setTimeout(function(){
+        this.verifyTimeout = setTimeout(() => {
           this.verify(platform);
         },1000)
       }
