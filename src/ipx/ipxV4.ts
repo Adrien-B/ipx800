@@ -7,6 +7,9 @@ import MapUtils from '../utils';
 
 export class IPXV4 implements IpxApiCaller {
 
+  public readonly toVerify = false;
+  public readonly verifyTimeout = false;
+
   async getStateByDeviceIndex(platform: IPXPlatform): Promise<Map<string, boolean>> {
     let api = platform.config['api'];
     const url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Get=all';
