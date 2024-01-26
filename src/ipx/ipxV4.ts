@@ -147,7 +147,7 @@ export class IPXV4 implements IpxApiCaller {
         this.verifyTimeout = setTimeout(() => {
           this.verifyTimeout = -1
           this.verify(platform);
-        },2000)
+        },1500)
       }
     }).catch(error => {
       platform.log.info('(Retry '+retry+') Error on : '+url);
