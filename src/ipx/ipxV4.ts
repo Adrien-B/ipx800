@@ -166,15 +166,17 @@ export class IPXV4 implements IpxApiCaller {
     return axios.get(url).then(ipxInfo => {
       platform.log.info('IPX state : '+JSON.stringify(ipxInfo.data));
       for (const i in this.toVerify) {
+        delete this.toVerify[i]
         if(!ipxInfo.data.hasOwnProperty(i)){
           continue;
         }
-        if(ipxInfo.data[i] != this.toVerify[i].value){
+        if(ipxInfo.data[i] == this.toVerify[i].value){
           platform.log.info(i+" => ok");
         }else{
           platform.log.info(i+" => nok, value : "+ipxInfo.data[i]+" expected : "+this.toVerify[i].value);
         }
       };
+      this.toVerify = {}
     });  
   }
 
