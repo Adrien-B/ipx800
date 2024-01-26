@@ -160,7 +160,12 @@ export class IPXV4 implements IpxApiCaller {
 
   public verify(platform: IPXPlatform){
     platform.log.info('Begin verify on : '+JSON.stringify(this.toVerify));
+    let api = platform.config['api'];
+    const url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Get=all';
+    return axios.get(url).then(ipxInfo => {
+      platform.log.info('IPX state : '+JSON.stringify(ipxInfo));
 
+    });  
   }
 
 }
