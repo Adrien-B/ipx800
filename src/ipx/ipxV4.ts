@@ -7,7 +7,7 @@ import MapUtils from '../utils';
 
 export class IPXV4 implements IpxApiCaller {
 
-  public toVerify = false;
+  public toVerify = {};
   public verifyTimeout = -1;
 
   async getStateByDeviceIndex(platform: IPXPlatform): Promise<Map<string, boolean>> {
@@ -153,9 +153,6 @@ export class IPXV4 implements IpxApiCaller {
   }
 
   public addVerify(key,value,url){
-      if(!this.toVerify){
-        this.toVerify = {};
-      }
       this.toVerify[key] = {
         value: value,
         url: url
