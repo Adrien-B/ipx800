@@ -71,12 +71,18 @@ export class IPXV4 implements IpxApiCaller {
       let url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Set' + onType + '=' + index;
       platform.log.info(accessory.context.device.displayName + ' On ---------- url: ' + url);
       this.sendOrder(url,platform,0);
-      this.addVerify(onType+index,1,url)
+      this.toVerify[onType+index] = {
+        value: 0,
+        url: url
+      }
     } else {
       let url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Clear' + onType + '=' + index;
       platform.log.info(accessory.context.device.displayName + ' Off ---------- url: ' + url);
       this.sendOrder(url,platform,0);
-      this.addVerify(onType+index,0,url)
+      this.toVerify[onType+index] = {
+        value: 0,
+        url: url
+      }
     }
     return;
   }
@@ -164,16 +170,14 @@ export class IPXV4 implements IpxApiCaller {
     let api = platform.config['api'];
     const url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Get=all';
     return axios.get(url).then(ipxInfo => {
-      platform.log.info('IPX state : '+JSON.stringify(ipxInfo.data));
       for (const i in this.toVerify) {
         if(!ipxInfo.data.hasOwnProperty(i)){
           delete this.toVerify[i]
           continue;
         }
-        if(ipxInfo.data[i] == this.toVerify[i].value){
-          platform.log.info(i+" => ok");
-        }else{
+        if(ipxInfo.data[i] != this.toVerify[i].value){
           platform.log.info(i+" => nok, value : "+ipxInfo.data[i]+" expected : "+this.toVerify[i].value);
+          this.sendOrder(this.toVerify[i].url,platform,4);
         }
         delete this.toVerify[i]
       };
