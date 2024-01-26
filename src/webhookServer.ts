@@ -3,6 +3,8 @@ import { IPXPlatform } from './platform';
 
 export class WebhookServer {
 
+    public updateTimeout;
+
     start(platform: IPXPlatform){
         if(!platform.config['api'].webhookPath || platform.config['api'].webhookPath.trim() == '' || !platform.config['api'].webhookPort){
             platform.log.info("Webhook configuration invalid");
@@ -15,7 +17,14 @@ export class WebhookServer {
             platform.log.info("Received request");
             const { method, url, headers } = request
             if (method === "GET" && url === "/"+platform.config['api'].webhookPath) {
-                platform.updateDevices();
+                if(this.updateTimeout && this.updateTimeout != -1){
+                    clearTimeout(this.updateTimeout);
+                }
+                this.updateTimeout = setTimeout(() => {
+                    this.updateTimeout = -1
+                    platform.log.info("Update state");
+                    platform.updateDevices();
+                },1000)
             }
             response.statusCode = 200
             response.end()
