@@ -8,7 +8,7 @@ import MapUtils from '../utils';
 export class IPXV4 implements IpxApiCaller {
 
   public toVerify = {};
-  public verifyTimeout = -1;
+  public verifyTimeout;
 
   async getStateByDeviceIndex(platform: IPXPlatform): Promise<Map<string, boolean>> {
     let api = platform.config['api'];
