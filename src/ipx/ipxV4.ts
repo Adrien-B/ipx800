@@ -158,14 +158,10 @@ export class IPXV4 implements IpxApiCaller {
    
   }
 
-  public addVerify(key,value,url){
-      this.toVerify[key] = {
-        value: value,
-        url: url
-      }
-  }
-
   public verify(platform: IPXPlatform){
+    if(Object.keys(this.toVerify).length == 0){
+      return;
+    }
     platform.log.info('Begin verify on : '+JSON.stringify(this.toVerify));
     let api = platform.config['api'];
     const url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Get=all';
