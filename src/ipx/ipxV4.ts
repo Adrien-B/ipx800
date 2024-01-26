@@ -172,7 +172,7 @@ export class IPXV4 implements IpxApiCaller {
         if(ipxInfo.data[i] != this.toVerify[i].value){
           platform.log.info(i+" => ok");
         }else{
-          platform.log.info(i+" => nok");
+          platform.log.info(i+" => nok, value : "+ipxInfo.data[i]+" expected : "+this.toVerify[i].value);
         }
       };
     });  
