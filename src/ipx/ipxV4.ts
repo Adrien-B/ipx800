@@ -72,7 +72,7 @@ export class IPXV4 implements IpxApiCaller {
       platform.log.info(accessory.context.device.displayName + ' On ---------- url: ' + url);
       this.sendOrder(url,platform,0);
       this.toVerify[onType+index] = {
-        value: 0,
+        value: 1,
         url: url
       }
     } else {
@@ -162,7 +162,6 @@ export class IPXV4 implements IpxApiCaller {
     if(Object.keys(this.toVerify).length == 0){
       return;
     }
-    platform.log.info('Begin verify on : '+JSON.stringify(this.toVerify));
     let api = platform.config['api'];
     const url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Get=all';
     return axios.get(url).then(ipxInfo => {
