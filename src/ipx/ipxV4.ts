@@ -9,7 +9,7 @@ export class IPXV4 implements IpxApiCaller {
 
   async getStateByDeviceIndex(platform: IPXPlatform): Promise<Map<string, boolean>> {
     let api = platform.config['api'];
-    const url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Get=all ';
+    const url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Get=all';
     return axios.get(url).then(ipxInfo => {
       let stateByIndex = new Map<string, boolean>();
       Object.keys(ipxInfo.data).map(key => {
@@ -25,7 +25,7 @@ export class IPXV4 implements IpxApiCaller {
 
   public getAnaPositionByDeviceIndex(platform: IPXPlatform): Promise<Map<string, number>> {
     let api = platform.config['api'];
-    let url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Get=all ';
+    let url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Get=all';
     return axios.get(url).then(ipxInfo => {
       let positionByIndex = new Map<string, number>();
       Object.keys(ipxInfo.data).map(key => {
@@ -68,10 +68,12 @@ export class IPXV4 implements IpxApiCaller {
       let url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Set' + onType + '=' + index;
       platform.log.info(accessory.context.device.displayName + ' On ---------- url: ' + url);
       this.sendOrder(url,platform,0);
+      this.addVerify(onType,1,url)
     } else {
       let url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Clear' + onType + '=' + index;
       platform.log.info(accessory.context.device.displayName + ' Off ---------- url: ' + url);
       this.sendOrder(url,platform,0);
+      this.addVerify(onType,0,url)
     }
     return;
   }
@@ -130,6 +132,12 @@ export class IPXV4 implements IpxApiCaller {
         }, 100 * retry);
       }else{
         platform.log.info('Succes on : '+url+' result : ',response?.data);
+        if(this.verifyTimeout){
+          clearTimeout(this.verifyTimeout);
+        }
+        this.verifyTimeout = setTimeout(function(){
+          this.verify(platform);
+        },1000)
       }
     }).catch(error => {
       platform.log.info('(Retry '+retry+') Error on : '+url);
@@ -137,5 +145,22 @@ export class IPXV4 implements IpxApiCaller {
         this.sendOrder(url,platform,retry);
       }, 100 * retry);
     });
+   
   }
+
+  public addVerify(key,value,url){
+      if(!this.toVerify){
+        this.toVerify = {};
+      }
+      this.toVerify[key] = {
+        value: value,
+        url: url
+      }
+  }
+
+  public verify(platform: IPXPlatform){
+    platform.log.info('Begin verify on : '+JSON.stringify(this.toVerify));
+
+  }
+
 }
