@@ -68,12 +68,12 @@ export class IPXV4 implements IpxApiCaller {
       let url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Set' + onType + '=' + index;
       platform.log.info(accessory.context.device.displayName + ' On ---------- url: ' + url);
       this.sendOrder(url,platform,0);
-      this.addVerify(onType,1,url)
+      this.addVerify(onType+index,1,url)
     } else {
       let url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Clear' + onType + '=' + index;
       platform.log.info(accessory.context.device.displayName + ' Off ---------- url: ' + url);
       this.sendOrder(url,platform,0);
-      this.addVerify(onType,0,url)
+      this.addVerify(onType+index,0,url)
     }
     return;
   }
