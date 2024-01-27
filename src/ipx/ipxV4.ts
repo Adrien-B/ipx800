@@ -148,6 +148,9 @@ export class IPXV4 implements IpxApiCaller {
         }
         this.verifyTimeout = setTimeout(() => {
           this.verifyTimeout = -1
+          if(Object.keys(this.toVerify).length == 0){
+            return;
+          }
           axios.get('http://' + api.ip + '/api/xdevices.json?key=' + platform.config['api'].key + '&Get=all').then(ipxInfo => {
             this.verify(platform,ipxInfo.data);
           });
