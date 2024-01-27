@@ -19,7 +19,6 @@ export class IPXV5 implements IpxApiCaller{
     });
   }
 
-
   async setOnDimmer(value: CharacteristicValue, platform: IPXPlatform, accessory: PlatformAccessory) {
     this.setOnRelay(value, platform, accessory);
     return;
