@@ -10,13 +10,12 @@ export class IPXV5 implements IpxApiCaller{
 
   async getState(platform: IPXPlatform) {
     const api = platform.config['api'];
-    const url = 'http://' + api.ip + '/api/core/io' + '?ApiKey=' + api.key ;
-    return axios.get(url).then(ipxInfo => MapUtils.toBoolByNum(ipxInfo.data, '_id', 'on'));
-    const api = platform.config['api'];
-    const url = 'http://' + api.ip + '/api/core/ana' + '?ApiKey=' + api.key ;
-    return axios.get(url).then(ipxInfo => {
-        const res = MapUtils.toStringByNum(ipxInfo.data, '_id', 'value');
-        return res;
+    return axios.get('http://' + api.ip + '/api/core/ana' + '?ApiKey=' + api.key).then(ipxInfo => {
+        let ana = MapUtils.toStringByNum(ipxInfo.data, '_id', 'value');
+        return axios.get('http://' + api.ip + '/api/core/io' + '?ApiKey=' + api.key).then(ipxInfo => {
+          let io = MapUtils.toBoolByNum(ipxInfo.data, '_id', 'on');
+          return {io:io,ana:ana};
+        });
     });
   }
 

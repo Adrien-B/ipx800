@@ -98,23 +98,6 @@ export class IPXPlatform implements DynamicPlatformPlugin {
           this.pullError = true;
         }
     });
-
-    this.ipxApiCaller.getAnaPositionByDeviceIndex(this)
-      .then(positionByIndex => {
-        Promise.all(this.anaDevices.map(d => {
-          let anaIndex = d.anaIndex || d.index;
-          if (positionByIndex[anaIndex.toUpperCase()] !== undefined) {
-            d.updateAnaValue(positionByIndex[anaIndex.toUpperCase()]);
-          }
-        }));
-        this.pullError = false;
-      })
-      .catch(err => {
-        if (!this.pullError) {
-          this.log.error('could not update input/output devices state', err);
-          this.pullError = true;
-        }
-    });
   }
 
   getDeviceUUID(device: Device){
