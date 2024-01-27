@@ -10,49 +10,37 @@ export class IPXV4 implements IpxApiCaller {
   public toVerify = {};
   public verifyTimeout;
 
-  async getStateByDeviceIndex(platform: IPXPlatform): Promise<Map<string, boolean>> {
+  async getState(platform: IPXPlatform): Promise<Map<string, boolean>> {
     let api = platform.config['api'];
     const url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Get=all';
     return axios.get(url).then(ipxInfo => {
-      if(this.verifyTimeout && this.verifyTimeout != -1){
-        clearTimeout(this.verifyTimeout);
-      }
       this.verify(platform,ipxInfo.data);
-      let stateByIndex = new Map<string, boolean>();
+
+      let io = new Map<string, boolean>();
       Object.keys(ipxInfo.data).map(key => {
         if (key.startsWith('R') || key.startsWith('V')) {
-          stateByIndex[key] = ipxInfo.data[key];
+          io[key] = ipxInfo.data[key];
         } else if (key.startsWith('G')) {
-          stateByIndex[key] = (ipxInfo.data[key]['Etat'] === 'ON');
+          io[key] = (ipxInfo.data[key]['Etat'] === 'ON');
         }
       });
-      return stateByIndex;
-    });
-  }
 
-  public getAnaPositionByDeviceIndex(platform: IPXPlatform): Promise<Map<string, number>> {
-    let api = platform.config['api'];
-    let url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Get=all';
-    return axios.get(url).then(ipxInfo => {
-      if(this.verifyTimeout && this.verifyTimeout != -1){
-        clearTimeout(this.verifyTimeout);
-      }
-      this.verify(platform,ipxInfo.data);
-      let positionByIndex = new Map<string, number>();
+      let ana = new Map<string, number>();
       Object.keys(ipxInfo.data).map(key => {
         if (key.startsWith('G')) {
-          positionByIndex[key] = (ipxInfo.data[key]['Valeur']);
+          ana[key] = (ipxInfo.data[key]['Valeur']);
         } else if (key.startsWith('THL')) {
-          positionByIndex[key] = ipxInfo.data[key];
+          ana[key] = ipxInfo.data[key];
         } else if (key.startsWith('VR')) {
           let info = key.replace('VR','').split('-')
           if(info.length == 2){
             let vrkey = 'VR'+String((parseInt(info[0])-1)*4+parseInt(info[1])).padStart(2, "0");
-            positionByIndex[vrkey] = ipxInfo.data[key];
+            ana[vrkey] = ipxInfo.data[key];
           }
         }
       });
-      return positionByIndex;
+
+      return {io : io, ana: ana} ;
     });
   }
 
@@ -109,8 +97,8 @@ export class IPXV4 implements IpxApiCaller {
         clearInterval(myInterval);
         return;
       }
-      self.getAnaPositionByDeviceIndex(platform).then(positionByIndex => {
-        if(positionByIndex[accessory.context.device.index] !== undefined && nVal == positionByIndex[accessory.context.device.index]){
+      self.getState(platform).then(state => {
+        if(state.ana[accessory.context.device.index] !== undefined && nVal == state.ana[accessory.context.device.index]){
           platform.updateDevices();
           clearInterval(myInterval);
           return;
@@ -157,7 +145,6 @@ export class IPXV4 implements IpxApiCaller {
           if(Object.keys(this.toVerify).length == 0){
             return;
           }
-          platform.log.info('Launch verify from timeout');
           axios.get('http://' + api.ip + '/api/xdevices.json?key=' + platform.config['api'].key + '&Get=all').then(ipxInfo => {
             this.verify(platform,ipxInfo.data);
           });

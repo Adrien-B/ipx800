@@ -77,11 +77,17 @@ export class IPXPlatform implements DynamicPlatformPlugin {
   }
 
   updateDevices() {
-    this.ipxApiCaller.getStateByDeviceIndex(this)
-      .then(stateByIndex => {
+    this.ipxApiCaller.getState(this)
+      .then(state => {
         Promise.all(this.ioDevices.map(d => {
-          if (stateByIndex[d.index.toUpperCase()] !== undefined) {
-            d.updateIO(stateByIndex[d.index.toUpperCase()]);
+          if (state.io[d.index.toUpperCase()] !== undefined) {
+            d.updateIO(state.io[d.index.toUpperCase()]);
+          }
+        }));
+        Promise.all(this.anaDevices.map(d => {
+          let anaIndex = d.anaIndex || d.index;
+          if (state.ana[anaIndex.toUpperCase()] !== undefined) {
+            d.updateAnaValue(state.ana[anaIndex.toUpperCase()]);
           }
         }));
         this.pullError = false;
