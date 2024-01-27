@@ -145,10 +145,11 @@ export class IPXV4 implements IpxApiCaller {
           if(Object.keys(this.toVerify).length == 0){
             return;
           }
+          platform.log.info("Launch verify from timeout");
           axios.get('http://' + platform.config['api'].ip + '/api/xdevices.json?key=' + platform.config['api'].key + '&Get=all').then(ipxInfo => {
             this.verify(platform,ipxInfo.data);
           });
-        },1250)
+        },500)
       }
     }).catch(error => {
       platform.log.info('(Retry '+retry+') Error on : '+url);
