@@ -163,6 +163,7 @@ export class IPXV4 implements IpxApiCaller {
   }
 
   public verify(platform: IPXPlatform,ipxInfo){
+    latform.log.info("Launch verify for "+JSON.stringify(this.toVerify));
     if(Object.keys(this.toVerify).length == 0){
       return;
     }
