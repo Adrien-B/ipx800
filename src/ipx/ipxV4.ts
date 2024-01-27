@@ -14,6 +14,7 @@ export class IPXV4 implements IpxApiCaller {
     let api = platform.config['api'];
     const url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Get=all';
     return axios.get(url).then(ipxInfo => {
+      this.verify(platform,ipxInfo.data);
       let stateByIndex = new Map<string, boolean>();
       Object.keys(ipxInfo.data).map(key => {
         if (key.startsWith('R') || key.startsWith('V')) {
@@ -30,6 +31,7 @@ export class IPXV4 implements IpxApiCaller {
     let api = platform.config['api'];
     let url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Get=all';
     return axios.get(url).then(ipxInfo => {
+      this.verify(platform,ipxInfo.data);
       let positionByIndex = new Map<string, number>();
       Object.keys(ipxInfo.data).map(key => {
         if (key.startsWith('G')) {
@@ -146,8 +148,10 @@ export class IPXV4 implements IpxApiCaller {
         }
         this.verifyTimeout = setTimeout(() => {
           this.verifyTimeout = -1
-          this.verify(platform);
-        },1000)
+          axios.get('http://' + api.ip + '/api/xdevices.json?key=' + platform.config['api'].key + '&Get=all').then(ipxInfo => {
+            this.verify(platform,ipxInfo.data);
+          });
+        },1250)
       }
     }).catch(error => {
       platform.log.info('(Retry '+retry+') Error on : '+url);
@@ -158,25 +162,21 @@ export class IPXV4 implements IpxApiCaller {
    
   }
 
-  public verify(platform: IPXPlatform){
+  public verify(platform: IPXPlatform,ipxInfo){
     if(Object.keys(this.toVerify).length == 0){
       return;
     }
-    let api = platform.config['api'];
-    const url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Get=all';
-    return axios.get(url).then(ipxInfo => {
-      for (const i in this.toVerify) {
-        if(!ipxInfo.data.hasOwnProperty(i)){
-          delete this.toVerify[i]
-          continue;
-        }
-        if(ipxInfo.data[i] != this.toVerify[i].value){
-          platform.log.info(i+" => nok, value : "+ipxInfo.data[i]+" expected : "+this.toVerify[i].value);
-          this.sendOrder(this.toVerify[i].url,platform,4);
-        }
+    for (const i in this.toVerify) {
+      if(!ipxInfo.hasOwnProperty(i)){
         delete this.toVerify[i]
-      };
-    });  
+        continue;
+      }
+      if(ipxInfo[i] != this.toVerify[i].value){
+        platform.log.info(i+" => nok, value : "+ipxInfo[i]+" expected : "+this.toVerify[i].value);
+        this.sendOrder(this.toVerify[i].url,platform,4);
+      }
+      delete this.toVerify[i]
+    }; 
+    return;
   }
-
 }

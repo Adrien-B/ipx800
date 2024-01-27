@@ -24,7 +24,7 @@ export class WebhookServer {
                     this.updateTimeout = -1
                     platform.log.info("Update state");
                     platform.updateDevices();
-                },1000)
+                },750)
             }
             response.statusCode = 200
             response.end()
