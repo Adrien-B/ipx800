@@ -18,7 +18,7 @@ export class IPXV4 implements IpxApiCaller {
     return;
   }
 
-  async getState(platform: IPXPlatform): Promise<{io:Map<string, boolean>,ana:Map<string, number>}> {
+  async getState(platform: IPXPlatform) {
     let api = platform.config['api'];
     const url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Get=all';
     return axios.get(url).then(ipxInfo => {
