@@ -23,6 +23,20 @@ export class IPXV5 implements IpxApiCaller{
     });
   }
 
+
+  async getState(platform: IPXPlatform): Promise {
+    const api = platform.config['api'];
+    const url = 'http://' + api.ip + '/api/core/io' + '?ApiKey=' + api.key ;
+    return axios.get(url).then(ipxInfo => MapUtils.toBoolByNum(ipxInfo.data, '_id', 'on'));
+    const api = platform.config['api'];
+    const url = 'http://' + api.ip + '/api/core/ana' + '?ApiKey=' + api.key ;
+    return axios.get(url).then(ipxInfo => {
+        const res = MapUtils.toStringByNum(ipxInfo.data, '_id', 'value');
+        return res;
+    });
+  }
+
+
   async setOnDimmer(value: CharacteristicValue, platform: IPXPlatform, accessory: PlatformAccessory) {
     this.setOnRelay(value, platform, accessory);
     return;
