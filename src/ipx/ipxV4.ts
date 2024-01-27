@@ -149,7 +149,7 @@ export class IPXV4 implements IpxApiCaller {
           axios.get('http://' + platform.config['api'].ip + '/api/xdevices.json?key=' + platform.config['api'].key + '&Get=all').then(ipxInfo => {
             this.verify(platform,ipxInfo.data);
           });
-        },500)
+        },1250)
       }
     }).catch(error => {
       platform.log.info('(Retry '+retry+') Error on : '+url);
