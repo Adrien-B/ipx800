@@ -11,6 +11,7 @@ import { RelayHandler } from './device/relay';
 import { GradualHandler } from './device/gradual';
 import { InputHandler } from './device/input';
 import { AnalogInputHandler } from './device/analogInput';
+import { WebhookServer } from  './webhookServer';
 
 
 /**
@@ -25,11 +26,14 @@ export class IPXPlatform implements DynamicPlatformPlugin {
   public readonly Characteristic: typeof Characteristic = this.homebridgeAPI.hap.Characteristic;
   private readonly configApi = this.config.api as Api;
   private readonly ipxApiCaller: IpxApiCaller = ((this.configApi.version === 'v5') ? new IPXV5: new IPXV4);
+  private readonly webhookServer: WebhookServer = new WebhookServer;
 
 
   // this is used to track restored cached accessories
   public readonly accessories: PlatformAccessory[] = [];
 
+  public ioDevices;
+  public anaDevices;
 
   private pullError = false;
 
@@ -43,7 +47,23 @@ export class IPXPlatform implements DynamicPlatformPlugin {
     this.homebridgeAPI.on('didFinishLaunching', () => {
       log.debug('Executed didFinishLaunching callback');
       // run the method to discover / register your devices as accessories
-      this.discoverDevices();
+      let deviceConf = new DeviceConfReader(this.log, this.config);
+      let relays = deviceConf.relays.map(d => this.findOrCreate(d, (da) => new RelayHandler(this, da, this.ipxApiCaller)));
+      let graduals = deviceConf.graduals.map(d => this.findOrCreate(d, (da) => new GradualHandler(this, da, this.ipxApiCaller))) ;
+      let inputs = deviceConf.inputs.map(d => this.findOrCreate(d, (da) => new InputHandler(this, da))) ;
+      let anaInputs = deviceConf.anaInputs.map(d => this.findOrCreate(d, (da) => new AnalogInputHandler(this, da))) ;
+      this.ioDevices = relays.concat(graduals, inputs).filter(d => d.index);
+      this.anaDevices = graduals.concat(anaInputs);
+      this.webhookServer.start(this);
+
+      this.updateDevices();
+
+      let self = this
+      if(this.config.api.pollInterval && this.config.api.pollInterval > 0){
+        setInterval(function(){
+          self.updateDevices();
+        }, this.config.api.pollInterval * 1000);
+      }
     });
   }
 
@@ -52,34 +72,22 @@ export class IPXPlatform implements DynamicPlatformPlugin {
    * It should be used to setup event handlers for characteristics and update respective values.
    */
   configureAccessory(device: PlatformAccessory) {
-    this.log.info('Loading accessory from cache:', device.displayName);
-
+    let deviceConf = new DeviceConfReader(this.log, this.config);
     this.accessories.push(device);
   }
 
-  /**
-   * This is an example method showing how to register discovered accessories.
-   * Accessories must only be registered once, previously created accessories
-   * must not be registered again to prevent "duplicate UUID" errors.
-   */
-
-  discoverDevices() {
-    const deviceConf = new DeviceConfReader(this.log, this.config);
-
-    const relays = deviceConf.relays.map(d => this.findOrCreate(d, (da) => new RelayHandler(this, da, this.ipxApiCaller)));
-    const graduals = deviceConf.graduals.map(d => this.findOrCreate(d, (da) => new GradualHandler(this, da, this.ipxApiCaller))) ;
-    const inputs = deviceConf.inputs.map(d => this.findOrCreate(d, (da) => new InputHandler(this, da))) ;
-    const anaInputs = deviceConf.anaInputs.map(d => this.findOrCreate(d, (da) => new AnalogInputHandler(this, da))) ;
-
-    const ioDevices : Array<IODeviceHandler> = relays.concat(graduals, inputs).filter(d => d.index);
-    const anaDevices : Array<AnaDeviceHandler> = graduals.concat(anaInputs);
-
-    //setInterval( () => {
-    this.ipxApiCaller.getStateByDeviceIndex(this)
-      .then(stateByIndex => {
-        Promise.all(ioDevices.map(d => {
-          if (stateByIndex[d.index.toUpperCase()] !== undefined) {
-            d.updateIO(stateByIndex[d.index.toUpperCase()]);
+  updateDevices() {
+    this.ipxApiCaller.getState(this)
+      .then(state => {
+        Promise.all(this.ioDevices.map(d => {
+          if (state.io[d.index.toUpperCase()] !== undefined) {
+            d.updateIO(state.io[d.index.toUpperCase()]);
+          }
+        }));
+        Promise.all(this.anaDevices.map(d => {
+          let anaIndex = d.anaIndex || d.index;
+          if (state.ana[anaIndex.toUpperCase()] !== undefined) {
+            d.updateAnaValue(state.ana[anaIndex.toUpperCase()]);
           }
         }));
         this.pullError = false;
@@ -89,45 +97,25 @@ export class IPXPlatform implements DynamicPlatformPlugin {
           this.log.error('could not update input/output devices state', err);
           this.pullError = true;
         }
-      });
-    //}, 2930);
-
-    //setInterval( () => {
-    this.ipxApiCaller.getAnaPositionByDeviceIndex(this)
-      .then(positionByIndex => {
-        Promise.all(anaDevices.map(d => {
-          const anaIndex = d.anaIndex || d.index;
-          if (positionByIndex[anaIndex.toUpperCase()] !== undefined) {
-            d.updateAnaValue(positionByIndex[anaIndex.toUpperCase()]);
-          }
-        }));
-        this.pullError = false;
-      })
-      .catch(err => {
-        if (!this.pullError) {
-          this.log.error('could not update input/output devices state', err);
-          this.pullError = true;
-        }
-      });
-    //}, 3553 );
+    });
   }
 
+  getDeviceUUID(device: Device){
+    return this.homebridgeAPI.hap.uuid.generate(device.displayName.replace(/\s/g, '') + '-' + device.index);
+  }
 
   findOrCreate(
     device: Device,
     builder: (device: PlatformAccessory) => IODeviceHandler | AnaDeviceHandler,
   ):IODeviceHandler | AnaDeviceHandler {
-    const uuidSeed = device.displayName.replace(/\s/g, '') + '-' + device.index;
-    const uuid = this.homebridgeAPI.hap.uuid.generate(uuidSeed);
-
-    const existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid);
-
+    let uuid = this.getDeviceUUID(device);
+    let existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid);
     if (existingAccessory) {
       this.log.info('Restoring existing accessory from cache:', existingAccessory.displayName);
       return builder(existingAccessory);
     } else {
       this.log.info('Adding new accessory:', device.displayName);
-      const accessory = new this.homebridgeAPI.platformAccessory(device.displayName, uuid);
+      let accessory = new this.homebridgeAPI.platformAccessory(device.displayName, uuid);
       accessory.context.device = device;
       this.homebridgeAPI.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
       return builder(accessory);
