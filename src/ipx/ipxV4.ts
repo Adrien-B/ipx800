@@ -14,6 +14,9 @@ export class IPXV4 implements IpxApiCaller {
     let api = platform.config['api'];
     const url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Get=all';
     return axios.get(url).then(ipxInfo => {
+      if(this.verifyTimeout && this.verifyTimeout != -1){
+        clearTimeout(this.verifyTimeout);
+      }
       this.verify(platform,ipxInfo.data);
       let stateByIndex = new Map<string, boolean>();
       Object.keys(ipxInfo.data).map(key => {
@@ -31,6 +34,9 @@ export class IPXV4 implements IpxApiCaller {
     let api = platform.config['api'];
     let url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Get=all';
     return axios.get(url).then(ipxInfo => {
+      if(this.verifyTimeout && this.verifyTimeout != -1){
+        clearTimeout(this.verifyTimeout);
+      }
       this.verify(platform,ipxInfo.data);
       let positionByIndex = new Map<string, number>();
       Object.keys(ipxInfo.data).map(key => {
