@@ -24,7 +24,7 @@ export class IPXV5 implements IpxApiCaller{
   }
 
 
-  async getState(platform: IPXPlatform): Promise<{}> {
+  async getState(platform: IPXPlatform): Promise<{io:Map<string, boolean>,ana:Map<string, number>}> {
     const api = platform.config['api'];
     const url = 'http://' + api.ip + '/api/core/io' + '?ApiKey=' + api.key ;
     return axios.get(url).then(ipxInfo => MapUtils.toBoolByNum(ipxInfo.data, '_id', 'on'));

@@ -10,6 +10,6 @@ export abstract class IpxApiCaller {
   public abstract setDimmerPosition(value: CharacteristicValue, platform: IPXPlatform, accessory: PlatformAccessory): void;
   public abstract getStateByDeviceIndex(platform: IPXPlatform): Promise<Map<string, boolean>>;
   public abstract getAnaPositionByDeviceIndex(platform: IPXPlatform): Promise<Map<string, number>>;
-  public abstract getState(platform: IPXPlatform): Promise<{}>;
+  public abstract getState(platform: IPXPlatform): Promise<{io:Map<string, boolean>,ana:Map<string, number>}>;
 
 }
