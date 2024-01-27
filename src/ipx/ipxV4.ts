@@ -10,6 +10,14 @@ export class IPXV4 implements IpxApiCaller {
   public toVerify = {};
   public verifyTimeout;
 
+  async getStateByDeviceIndex(platform: IPXPlatform): Promise<Map<string, boolean>> {
+    return;
+  }
+
+  async getAnaPositionByDeviceIndex(platform: IPXPlatform): Promise<Map<string, number>> {
+    return;
+  }
+
   async getState(platform: IPXPlatform): Promise<Map<string, boolean>> {
     let api = platform.config['api'];
     const url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Get=all';
