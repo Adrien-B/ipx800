@@ -7,22 +7,6 @@ import MapUtils from '../utils';
 
 export class IPXV5 implements IpxApiCaller{
 
-  async getStateByDeviceIndex(platform: IPXPlatform): Promise<Map<string, boolean>> {
-    const api = platform.config['api'];
-    const url = 'http://' + api.ip + '/api/core/io' + '?ApiKey=' + api.key ;
-    return axios.get(url).then(ipxInfo => MapUtils.toBoolByNum(ipxInfo.data, '_id', 'on'));
-  }
-
-
-  async getAnaPositionByDeviceIndex(platform: IPXPlatform): Promise<Map<string, number>> {
-    const api = platform.config['api'];
-    const url = 'http://' + api.ip + '/api/core/ana' + '?ApiKey=' + api.key ;
-    return axios.get(url).then(ipxInfo => {
-        const res = MapUtils.toStringByNum(ipxInfo.data, '_id', 'value');
-        return res;
-    });
-  }
-
 
   async getState(platform: IPXPlatform) {
     const api = platform.config['api'];
