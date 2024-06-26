@@ -69,7 +69,8 @@ export class IPXV4 implements IpxApiCaller {
       this.sendOrder(url,platform,0);
       this.toVerify[onType+index] = {
         value: 1,
-        url: url
+        url: url,
+        datetime : Math.round(new Date().getTime()/1000)
       }
     } else {
       let url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Clear' + onType + '=' + index;
@@ -77,7 +78,8 @@ export class IPXV4 implements IpxApiCaller {
       this.sendOrder(url,platform,0);
       this.toVerify[onType+index] = {
         value: 0,
-        url: url
+        url: url,
+        datetime : Math.round(new Date().getTime()/1000)
       }
     }
     return;
@@ -91,27 +93,26 @@ export class IPXV4 implements IpxApiCaller {
     platform.log.info('Set Characteristic position -> ', nVal);
     let loop = 0
     let self = this
-    self.getState(platform).then(state => {
-      let initialState = state.ana[accessory.context.device.index]
-      let myInterval = setInterval(function(){
-        loop++
-        if(loop > 15){
+    let myInterval = setInterval(function(){
+      loop++
+      if(loop > 15){
+        clearInterval(myInterval);
+        return;
+      }
+      self.getState(platform).then(state => {
+        if(state.ana[accessory.context.device.index] !== undefined && nVal == state.ana[accessory.context.device.index]){
+          platform.updateDevices();
           clearInterval(myInterval);
           return;
         }
-        self.getState(platform).then(state => {
-          if(loop == 4 && state.ana[accessory.context.device.index] == initialState){
-            self.sendOrder(url,platform,0);
-          }
-          if(state.ana[accessory.context.device.index] !== undefined && nVal == state.ana[accessory.context.device.index]){
-            platform.updateDevices();
-            clearInterval(myInterval);
-            return;
-          }
-        })
-      },2000)
-      self.sendOrder(url,platform,0);
-    })
+      })
+    },2000)
+    self.sendOrder(url,platform,0);
+    this.toVerify[accessory.context.device.index] = {
+      value: nVal,
+      url: url,
+      datetime : Math.round(new Date().getTime()/1000)
+    }
     return;
   }
 
@@ -177,6 +178,10 @@ export class IPXV4 implements IpxApiCaller {
         continue;
       }
       if(ipxInfo[i] != this.toVerify[i].value){
+        if(i.indexOf('VR') !== -1 && (this.toVerify[i].datetime + 2500) > Math.round(new Date().getTime()/1000)){
+          platform.log.info(i+" => nok, value : "+ipxInfo[i]+" expected : "+this.toVerify[i].value+" but it's VR and it's too early I will wait little more");
+          continue;
+        }
         platform.log.info(i+" => nok, value : "+ipxInfo[i]+" expected : "+this.toVerify[i].value);
         this.sendOrder(this.toVerify[i].url,platform,4);
       }
