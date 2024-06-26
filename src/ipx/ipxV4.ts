@@ -144,19 +144,7 @@ export class IPXV4 implements IpxApiCaller {
         }, 100 * retry);
       }else{
         platform.log.info('Succes on : '+url+' result : ',response?.data);
-        if(this.verifyTimeout && this.verifyTimeout != -1){
-          clearTimeout(this.verifyTimeout);
-        }
-        this.verifyTimeout = setTimeout(() => {
-          this.verifyTimeout = -1
-          if(Object.keys(this.toVerify).length == 0){
-            return;
-          }
-          platform.log.info("Launch verify from timeout");
-          axios.get('http://' + platform.config['api'].ip + '/api/xdevices.json?key=' + platform.config['api'].key + '&Get=all').then(ipxInfo => {
-            this.verify(platform,ipxInfo.data);
-          });
-        },1250)
+        this.planVerify(1250);
       }
     }).catch(error => {
       platform.log.info('(Retry '+retry+') Error on : '+url);
@@ -164,7 +152,6 @@ export class IPXV4 implements IpxApiCaller {
         this.sendOrder(url,platform,retry);
       }, 100 * retry);
     });
-   
   }
 
   public verify(platform: IPXPlatform,ipxInfo){
@@ -180,6 +167,9 @@ export class IPXV4 implements IpxApiCaller {
       if(ipxInfo[i] != this.toVerify[i].value){
         if(i.indexOf('VR') !== -1 && (this.toVerify[i].datetime + 2500) > Math.round(new Date().getTime()/1000)){
           platform.log.info(i+" => nok, value : "+ipxInfo[i]+" expected : "+this.toVerify[i].value+" but it's VR and it's too early I will wait little more");
+          if(!this.verifyTimeout || this.verifyTimeout == -1){
+            this.planVerify(2000);
+          }
           continue;
         }
         platform.log.info(i+" => nok, value : "+ipxInfo[i]+" expected : "+this.toVerify[i].value);
@@ -189,4 +179,22 @@ export class IPXV4 implements IpxApiCaller {
     }; 
     return;
   }
+
+
+  public planVerify(timeout){
+    if(this.verifyTimeout && this.verifyTimeout != -1){
+      clearTimeout(this.verifyTimeout);
+    }
+    this.verifyTimeout = setTimeout(() => {
+      this.verifyTimeout = -1
+      if(Object.keys(this.toVerify).length == 0){
+        return;
+      }
+      platform.log.info("Launch verify from timeout");
+      axios.get('http://' + platform.config['api'].ip + '/api/xdevices.json?key=' + platform.config['api'].key + '&Get=all').then(ipxInfo => {
+        this.verify(platform,ipxInfo.data);
+      });
+    },timeout)
+  }
+
 }
