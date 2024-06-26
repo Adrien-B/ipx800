@@ -1,12 +1,3 @@
-
-<p align="center">
-
-<!-- <img src="https://github.com/homebridge/branding/raw/master/logos/homebridge-wordmark-logo-vertical.png" width="150"> -->
-<img src="https://play-lh.googleusercontent.com/9doSEOplvz2nX67aaO6mCUc-UpcqQSEIalcfookSB0tR2QA6F9ffMv1QKcHWfWp3kjim" width="250">
-
-</p>
-
-
 # Homebridge IPX800 Plugin
 
 This plugin brings support of IPX800 to homekit.
