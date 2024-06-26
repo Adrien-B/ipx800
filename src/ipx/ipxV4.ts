@@ -144,7 +144,7 @@ export class IPXV4 implements IpxApiCaller {
         }, 100 * retry);
       }else{
         platform.log.info('Succes on : '+url+' result : ',response?.data);
-        this.planVerify(1250);
+        this.planVerify(platform,1250);
       }
     }).catch(error => {
       platform.log.info('(Retry '+retry+') Error on : '+url);
@@ -168,7 +168,7 @@ export class IPXV4 implements IpxApiCaller {
         if(i.indexOf('VR') !== -1 && (this.toVerify[i].datetime + 2500) > Math.round(new Date().getTime()/1000)){
           platform.log.info(i+" => nok, value : "+ipxInfo[i]+" expected : "+this.toVerify[i].value+" but it's VR and it's too early I will wait little more");
           if(!this.verifyTimeout || this.verifyTimeout == -1){
-            this.planVerify(2000);
+            this.planVerify(platform,2000);
           }
           continue;
         }
@@ -180,8 +180,10 @@ export class IPXV4 implements IpxApiCaller {
     return;
   }
 
-
-  public planVerify(timeout){
+  public planVerify(platform: IPXPlatform,timeout){
+    if(!timeout){
+      timeout = 1250
+    }
     if(this.verifyTimeout && this.verifyTimeout != -1){
       clearTimeout(this.verifyTimeout);
     }
