@@ -91,21 +91,27 @@ export class IPXV4 implements IpxApiCaller {
     platform.log.info('Set Characteristic position -> ', nVal);
     let loop = 0
     let self = this
-    let myInterval = setInterval(function(){
-      loop++
-      if(loop > 15){
-        clearInterval(myInterval);
-        return;
-      }
-      self.getState(platform).then(state => {
-        if(state.ana[accessory.context.device.index] !== undefined && nVal == state.ana[accessory.context.device.index]){
-          platform.updateDevices();
+    self.getState(platform).then(state => {
+      let initialState = state.ana[accessory.context.device.index]
+      let myInterval = setInterval(function(){
+        loop++
+        if(loop > 15){
           clearInterval(myInterval);
           return;
         }
-      })
-    },2000)
-    this.sendOrder(url,platform,0);
+        self.getState(platform).then(state => {
+          if(loop == 4 && state.ana[accessory.context.device.index] == initialState){
+            self.sendOrder(url,platform,0);
+          }
+          if(state.ana[accessory.context.device.index] !== undefined && nVal == state.ana[accessory.context.device.index]){
+            platform.updateDevices();
+            clearInterval(myInterval);
+            return;
+          }
+        })
+      },2000)
+      self.sendOrder(url,platform,0);
+    })
     return;
   }
 
