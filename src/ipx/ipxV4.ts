@@ -165,10 +165,10 @@ export class IPXV4 implements IpxApiCaller {
         continue;
       }
       if(ipxInfo[i] != this.toVerify[i].value){
-        if(i.indexOf('VR') !== -1 && (this.toVerify[i].datetime + 2500) > Math.round(new Date().getTime()/1000)){
+        if(i.indexOf('VR') !== -1 && (this.toVerify[i].datetime + 30000) > Math.round(new Date().getTime()/1000)){
           platform.log.info(i+" => nok, value : "+ipxInfo[i]+" expected : "+this.toVerify[i].value+" but it's VR and it's too early I will wait little more");
           if(!this.verifyTimeout || this.verifyTimeout == -1){
-            this.planVerify(platform,2000);
+            this.planVerify(platform,30000);
           }
           continue;
         }
