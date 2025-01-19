@@ -15,7 +15,7 @@ export class AnalogInputHandler {
     // set accessory information
     this.accessory.getService(this.platform.Service.AccessoryInformation)!
       .setCharacteristic(this.platform.Characteristic.Manufacturer, 'GCE-Electronic')
-      .setCharacteristic(this.platform.Characteristic.Model, this.platform.model);
+      .setCharacteristic(this.platform.Characteristic.Model, accessory.context.device.displayName);
 
     switch(accessory.context.device.type) {
       case 'humidity': {
@@ -39,12 +39,12 @@ export class AnalogInputHandler {
     this.service.setCharacteristic(this.platform.Characteristic.Name, accessory.context.device.displayName);
   }
 
-  async updateAnaValue(state: number){
+  async updateAnaValue(value: number){
     if (this.characteristic === this.platform.Characteristic.CurrentAmbientLightLevel) {
-      state = Math.max(state, 0.1);
-    }// else if (this.index == "THL1-TEMP") {
-    //	    state = (state - 1);
-    //  }
-    this.service.updateCharacteristic(this.characteristic, state);
+      value = Math.max(value, 0.1);
+    }
+    if(this.service.getCharacteristic(this.characteristic).value != value){
+      this.service.updateCharacteristic(this.characteristic, value);
+    }
   }
 }

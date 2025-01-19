@@ -7,6 +7,7 @@ import { IpxApiCaller } from '../ipx/api';
 export class RelayHandler {
   public readonly index: string = this.accessory.context.device.index;
   private readonly service: Service;
+  private state;
 
   constructor(
     private readonly platform: IPXPlatform,
@@ -16,10 +17,14 @@ export class RelayHandler {
     // set accessory information
     this.accessory.getService(this.platform.Service.AccessoryInformation)!
       .setCharacteristic(this.platform.Characteristic.Manufacturer, 'GCE-Electronic')
-      .setCharacteristic(this.platform.Characteristic.Model, 'IPX-800');
+      .setCharacteristic(this.platform.Characteristic.Model, accessory.context.device.displayName);
 
     switch(accessory.context.device.type) {
       case 'bswitch': {
+        this.service = this.accessory.getService(this.platform.Service.Switch) || this.accessory.addService(this.platform.Service.Switch);
+        break;
+      }
+      case 'toggle': {
         this.service = this.accessory.getService(this.platform.Service.Switch) || this.accessory.addService(this.platform.Service.Switch);
         break;
       }
@@ -62,7 +67,14 @@ export class RelayHandler {
     }
   }
 
-  public updateIO(state: boolean){
-    this.service.updateCharacteristic(this.platform.Characteristic.On, state);
+  public updateIO(value: boolean){
+    if(this.accessory.context.device.type == 'toggle'){
+      this.service.updateCharacteristic(this.platform.Characteristic.On, false);
+    }else{
+      this.state = value;
+      if(this.service.getCharacteristic(this.platform.Characteristic.On).value != value){
+        this.service.updateCharacteristic(this.platform.Characteristic.On, value);
+      }
+    }
   }
 }

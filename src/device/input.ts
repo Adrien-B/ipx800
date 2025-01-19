@@ -14,7 +14,7 @@ export class InputHandler {
     // set accessory information
     this.accessory.getService(this.platform.Service.AccessoryInformation)!
       .setCharacteristic(this.platform.Characteristic.Manufacturer, 'GCE-Electronic')
-      .setCharacteristic(this.platform.Characteristic.Model, 'IPX-800');
+      .setCharacteristic(this.platform.Characteristic.Model, accessory.context.device.displayName);
 
     switch(accessory.context.device.type) {
       case 'motion': {
@@ -38,7 +38,9 @@ export class InputHandler {
     this.service.setCharacteristic(this.platform.Characteristic.Name, accessory.context.device.displayName);
   }
 
-  public updateIO(state: boolean){
-    this.service.updateCharacteristic(this.characteristic, state);
+  public updateIO(value: boolean){
+    if(this.service.getCharacteristic(this.characteristic).value != value){
+      this.service.updateCharacteristic(this.characteristic, value);
+    }
   }
 }
