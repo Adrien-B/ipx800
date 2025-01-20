@@ -30,6 +30,14 @@ Chmod +x install.sh;./install.sh
 homebridge -D
 ```
 
+or
+cd ipx800
+npm install
+sudo npm install -g  typescript rimraf
+# build and link plugin
+npm run build 
+npm link #or sudo npm link
+
 ## Configure the plugin
 
 In homebridge set the ipx api settings

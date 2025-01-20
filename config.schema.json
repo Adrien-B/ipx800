@@ -148,7 +148,9 @@
       "items" : [ 
         {"key": "api.ip", "title": "ipx ip"}, 
         {"key": "api.key", "title": "ipx api key"},
-        {"key": "api.version", "title": "ipx version"}
+        {"key": "api.pollInterval", "title": "ipx poll interval"},
+        {"key": "api.webhookPort", "title": "ipx webhook port"},
+        {"key": "api.webhookPath", "title": "ipx webhook path"}
       ]
     },
     {

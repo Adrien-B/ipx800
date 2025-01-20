@@ -17,7 +17,7 @@ export class RelayHandler {
     // set accessory information
     this.accessory.getService(this.platform.Service.AccessoryInformation)!
       .setCharacteristic(this.platform.Characteristic.Manufacturer, 'GCE-Electronic')
-      .setCharacteristic(this.platform.Characteristic.Model, accessory.context.device.displayName);
+      .setCharacteristic(this.platform.Characteristic.Model, 'IPX-800');
 
     switch(accessory.context.device.type) {
       case 'bswitch': {

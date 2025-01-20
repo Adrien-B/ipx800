@@ -20,7 +20,7 @@ import { WebhookServer } from  './webhookServer';
  * parse the user config and discover/register accessories with Homebridge.
  */
 export class IPXPlatform implements DynamicPlatformPlugin {
-  public readonly model = 'IPX-800';
+  public readonly model = 'IPX-800-Floor1';
 
   public readonly Service: typeof Service = this.homebridgeAPI.hap.Service;
   public readonly Characteristic: typeof Characteristic = this.homebridgeAPI.hap.Characteristic;
@@ -59,11 +59,9 @@ export class IPXPlatform implements DynamicPlatformPlugin {
       this.updateDevices();
 
       let self = this
-      if(this.config.api.pollInterval && this.config.api.pollInterval > 0){
-        setInterval(function(){
+      setInterval(function() {
           self.updateDevices();
-        }, this.config.api.pollInterval * 1000);
-      }
+      }, this.config.api.pollInterval * 1000 || 3500);
     });
   }
 
@@ -80,14 +78,14 @@ export class IPXPlatform implements DynamicPlatformPlugin {
     this.ipxApiCaller.getState(this)
       .then(state => {
         Promise.all(this.ioDevices.map(d => {
-          if (state.io[d.index.toUpperCase()] !== undefined) {
-            d.updateIO(state.io[d.index.toUpperCase()]);
+          if (state.stateByIndex[d.index.toUpperCase()] !== undefined) {
+            d.updateIO(state.stateByIndex[d.index.toUpperCase()]);
           }
         }));
         Promise.all(this.anaDevices.map(d => {
           let anaIndex = d.anaIndex || d.index;
-          if (state.ana[anaIndex.toUpperCase()] !== undefined) {
-            d.updateAnaValue(state.ana[anaIndex.toUpperCase()]);
+          if (state.positionByIndex[anaIndex.toUpperCase()] !== undefined) {
+            d.updateAnaValue(state.positionByIndex[anaIndex.toUpperCase()]);
           }
         }));
         this.pullError = false;

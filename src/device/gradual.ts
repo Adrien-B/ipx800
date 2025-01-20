@@ -50,6 +50,7 @@ export class GradualHandler {
 
   async updateAnaValue(value: number){
     if (this.characteristic === this.platform.Characteristic.CurrentPosition) {
+      //if curtain (xv4r) revert position
       this.state = 100 - value;
       if(this.service.getCharacteristic(this.characteristic).value != (100 - value)){
         this.service.updateCharacteristic(this.characteristic, 100 - value);
