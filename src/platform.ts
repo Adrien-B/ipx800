@@ -20,7 +20,7 @@ import { WebhookServer } from  './webhookServer';
  * parse the user config and discover/register accessories with Homebridge.
  */
 export class IPXPlatform implements DynamicPlatformPlugin {
-  public readonly model = 'IPX-800-Floor1';
+  public readonly model = 'IPX-800';
 
   public readonly Service: typeof Service = this.homebridgeAPI.hap.Service;
   public readonly Characteristic: typeof Characteristic = this.homebridgeAPI.hap.Characteristic;
