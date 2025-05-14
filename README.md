@@ -30,13 +30,15 @@ Chmod +x install.sh;./install.sh
 homebridge -D
 ```
 
-or
+or manually
+```
 cd ipx800
 npm install
 sudo npm install -g  typescript rimraf
-# build and link plugin
+#build and link plugin
 npm run build 
 npm link #or sudo npm link
+```
 
 ## Configure the plugin
 

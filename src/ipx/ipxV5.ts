@@ -30,11 +30,11 @@ export class IPXV5 implements IpxApiCaller{
     platform.log.debug('Set Characteristic On ->', value);
     if (value as boolean){
       let json = JSON.stringify({ on: true });
-      platform.log.error('turning on '+ accessory.context.device.displayName + '  using  ' + url + '  sending  ' + json);
+      platform.log.debug('turning on '+ accessory.context.device.displayName + '  using  ' + url + '  sending  ' + json);
       axios.put(url, json);
     } else {
       let json = JSON.stringify({ on: false });
-      platform.log.error('turning off '+ accessory.context.device.displayName+ '  using  ' + url + '  sending  ' + json);
+      platform.log.debug('turning off '+ accessory.context.device.displayName+ '  using  ' + url + '  sending  ' + json);
       axios.put(url, json);
     }
     return;
@@ -46,7 +46,7 @@ export class IPXV5 implements IpxApiCaller{
   }
 
   async setDimmerPosition(value: CharacteristicValue, platform: IPXPlatform, accessory: PlatformAccessory) {
-    this.setAnaPosition(100 - (value as number), platform, accessory);
+    this.setAnaPosition(value as number, platform, accessory);
     return;
   }
 
@@ -55,7 +55,7 @@ export class IPXV5 implements IpxApiCaller{
     let api = platform.config['api'];
     let url = 'http://' + api.ip + '/api/core/ana/' + accessory.context.device.anaIndex + '?ApiKey=' + api.key ;
     let json = JSON.stringify({ virtual: true, value: nVal});
-    platform.log.error('setting level of '+ accessory.context.device.displayName + ' using  ' + url + '  sending  ' + json);
+    platform.log.debug('setting level of '+ accessory.context.device.displayName + ' using  ' + url + '  sending  ' + json);
     platform.log.debug('Set Characteristic Brightness -> ', nVal);
     axios.put(url, json);
     return;
