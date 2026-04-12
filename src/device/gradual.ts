@@ -1,6 +1,5 @@
 import { Service, PlatformAccessory } from 'homebridge';
 import { IPXPlatform } from '../platform';
-import axios from 'axios';
 import { IpxApiCaller } from '../ipx/api';
 
 
@@ -21,12 +20,14 @@ export class GradualHandler {
       .setCharacteristic(this.platform.Characteristic.Manufacturer, 'GCE-Electronic')
       .setCharacteristic(this.platform.Characteristic.Model, accessory.context.device.displayName);
 
-    switch(accessory.context.device.type) {
+    switch (accessory.context.device.type) {
       case 'covering': {
-        this.service = this.accessory.getService(this.platform.Service.WindowCovering) || this.accessory.addService(this.platform.Service.WindowCovering);
+        this.service = this.accessory.getService(this.platform.Service.WindowCovering)
+          || this.accessory.addService(this.platform.Service.WindowCovering);
         this.service.setCharacteristic(this.platform.Characteristic.Name, accessory.context.device.displayName);
-        this.service.getCharacteristic(this.platform.Characteristic.TargetPosition).onSet((v) => ipx.setVRPosition(v, this.platform, this.accessory));
-        this.characteristic = this.platform.Characteristic.CurrentPosition; //but onSet is TargetPosition
+        this.service.getCharacteristic(this.platform.Characteristic.TargetPosition)
+          .onSet((v) => ipx.setVRPosition(v, this.platform, this.accessory));
+        this.characteristic = this.platform.Characteristic.CurrentPosition;
         break;
       }
       case 'fan': {
@@ -52,17 +53,21 @@ export class GradualHandler {
     if (this.characteristic === this.platform.Characteristic.CurrentPosition) {
       //if curtain (xv4r) revert position
       this.state = 100 - value;
-      if(this.service.getCharacteristic(this.characteristic).value != (100 - value)){
+      if (this.service.getCharacteristic(this.characteristic).value !== (100 - value)) {
         this.service.updateCharacteristic(this.characteristic, 100 - value);
-        this.service.updateCharacteristic(this.platform.Characteristic.PositionState, this.platform.Characteristic.PositionState.STOPPED);
+        this.service.updateCharacteristic(
+          this.platform.Characteristic.PositionState,
+          this.platform.Characteristic.PositionState.STOPPED,
+        );
         this.service.updateCharacteristic(this.platform.Characteristic.TargetPosition, 100 - value);
       }
-      if(this.service.getCharacteristic(this.platform.Characteristic.PositionState).value != this.platform.Characteristic.PositionState.STOPPED){
+      const posState = this.service.getCharacteristic(this.platform.Characteristic.PositionState);
+      if (posState.value !== this.platform.Characteristic.PositionState.STOPPED) {
         this.service.updateCharacteristic(this.platform.Characteristic.PositionState, this.platform.Characteristic.PositionState.STOPPED);
       }
     } else {
       this.state = value;
-      if(this.service.getCharacteristic(this.characteristic).value != value){
+      if (this.service.getCharacteristic(this.characteristic).value !== value) {
         this.service.updateCharacteristic(this.characteristic, value);
       }
     }
@@ -70,7 +75,7 @@ export class GradualHandler {
 
   async updateIO(value: boolean){
     this.state = value;
-    if(this.service.getCharacteristic(this.platform.Characteristic.On).value != value){
+    if (this.service.getCharacteristic(this.platform.Characteristic.On).value !== value) {
       this.service.updateCharacteristic(this.platform.Characteristic.On, value);
     }
   }

@@ -5,9 +5,9 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export type MouvementSensorFrDetecteurDeMouvement = "motion";
-export type SwitchFrInterrupteur = "switch";
-export type ContactSensorFrContacteur = "contact";
+export type MouvementSensorFrDetecteurDeMouvement = 'motion';
+export type SwitchFrInterrupteur = 'switch';
+export type ContactSensorFrContacteur = 'contact';
 export type Inputs = {
   displayName: string;
   type: (MouvementSensorFrDetecteurDeMouvement | SwitchFrInterrupteur | ContactSensorFrContacteur) & string;

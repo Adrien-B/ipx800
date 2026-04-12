@@ -5,10 +5,10 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export type LightFrLumiere = "light";
-export type FanFrVentilation = "fan";
-export type X4Fp = "x4fp";
-export type WindowCoveringFrVoletRideau = "covering";
+export type LightFrLumiere = 'light';
+export type FanFrVentilation = 'fan';
+export type X4Fp = 'x4fp';
+export type WindowCoveringFrVoletRideau = 'covering';
 export type Graduals = {
   displayName: string;
   type: (LightFrLumiere | FanFrVentilation | X4Fp | WindowCoveringFrVoletRideau) & string;

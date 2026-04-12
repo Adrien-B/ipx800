@@ -1,8 +1,6 @@
-import { API as homebridgeAPI, Logger, PlatformConfig, PlatformAccessory } from 'homebridge';
-import { IPXPlatform } from '../platform';
-import { IpxApiCaller } from '../ipx/api';
+import { Logger, PlatformConfig } from 'homebridge';
 
-import { Device, IODeviceHandler, AnaDeviceHandler } from '../conf-definition/deviceConfig';
+import { Device } from '../conf-definition/deviceConfig';
 import { Graduals} from '../conf-definition/graduals';
 import { Relays } from '../conf-definition/relays';
 import { Inputs } from '../conf-definition/inputs';

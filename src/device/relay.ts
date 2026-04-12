@@ -68,11 +68,11 @@ export class RelayHandler {
   }
 
   public updateIO(value: boolean){
-    if(this.accessory.context.device.type == 'toggle'){
+    if (this.accessory.context.device.type === 'toggle') {
       this.service.updateCharacteristic(this.platform.Characteristic.On, false);
     }else{
       this.state = value;
-      if(this.service.getCharacteristic(this.platform.Characteristic.On).value != value){
+      if (this.service.getCharacteristic(this.platform.Characteristic.On).value !== value) {
         this.service.updateCharacteristic(this.platform.Characteristic.On, value);
       }
     }

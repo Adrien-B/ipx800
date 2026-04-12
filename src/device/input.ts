@@ -39,7 +39,7 @@ export class InputHandler {
   }
 
   public updateIO(value: boolean){
-    if(this.service.getCharacteristic(this.characteristic).value != value){
+    if (this.service.getCharacteristic(this.characteristic).value !== value) {
       this.service.updateCharacteristic(this.characteristic, value);
     }
   }

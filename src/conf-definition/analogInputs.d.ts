@@ -5,9 +5,9 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export type HumiditySensorFrCapteurDHumidity = "humidity";
-export type LightSensorFrCapteurDeLuminosite = "light";
-export type TemperatureSensorFrThermometre = "temperature";
+export type HumiditySensorFrCapteurDHumidity = 'humidity';
+export type LightSensorFrCapteurDeLuminosite = 'light';
+export type TemperatureSensorFrThermometre = 'temperature';
 export type AnalogInputs = {
   displayName: string;
   type: (HumiditySensorFrCapteurDHumidity | LightSensorFrCapteurDeLuminosite | TemperatureSensorFrThermometre) &

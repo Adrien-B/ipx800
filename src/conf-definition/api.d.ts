@@ -8,7 +8,7 @@
 export interface Api {
   ip: string;
   key: string;
-  version: "v4" | "v5";
+  version: 'v4' | 'v5';
   pollInterval: number;
   webhookPort: number;
   webhookPath: string;

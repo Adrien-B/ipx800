@@ -43,7 +43,7 @@ export class AnalogInputHandler {
     if (this.characteristic === this.platform.Characteristic.CurrentAmbientLightLevel) {
       value = Math.max(value, 0.1);
     }
-    if(this.service.getCharacteristic(this.characteristic).value != value){
+    if (this.service.getCharacteristic(this.characteristic).value !== value) {
       this.service.updateCharacteristic(this.characteristic, value);
     }
   }
