@@ -75,26 +75,27 @@ export class IPXPlatform implements DynamicPlatformPlugin {
   }
 
   updateDevices() {
-    this.ipxApiCaller.getState(this)
-      .then(state => {
-        Promise.all(this.ioDevices.map(d => {
-          if (state.stateByIndex[d.index.toUpperCase()] !== undefined) {
-            d.updateIO(state.stateByIndex[d.index.toUpperCase()]);
-          }
-        }));
-        Promise.all(this.anaDevices.map(d => {
-          let anaIndex = d.anaIndex || d.index;
-          if (state.positionByIndex[anaIndex.toUpperCase()] !== undefined) {
-            d.updateAnaValue(state.positionByIndex[anaIndex.toUpperCase()]);
-          }
-        }));
-        this.pullError = false;
-      })
-      .catch(err => {
-        if (!this.pullError) {
-          this.log.error('could not update input/output devices state', err);
-          this.pullError = true;
+  this.ipxApiCaller.getState(this)
+    .then(state => {
+      this.ioDevices.forEach(d => {
+        const key = d.index.toUpperCase();
+        if (state.stateByIndex.has(key)) {
+          d.updateIO(state.stateByIndex.get(key));
         }
+      });
+      this.anaDevices.forEach(d => {
+        const anaIndex = (d.anaIndex || d.index).toUpperCase();
+        if (state.positionByIndex.has(anaIndex)) {
+          d.updateAnaValue(state.positionByIndex.get(anaIndex));
+        }
+      });
+      this.pullError = false;
+    })
+    .catch(err => {
+      if (!this.pullError) {
+        this.log.error('could not update input/output devices state', err);
+        this.pullError = true;
+      }
     });
   }
 

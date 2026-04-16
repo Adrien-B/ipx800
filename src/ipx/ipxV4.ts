@@ -13,22 +13,23 @@ export class IPXV4 implements IpxApiCaller {
     const url = 'http://' + api.ip + '/api/xdevices.json?key=' + api.key + '&Get=all';
     return axios.get(url).then(ipxInfo => {
       this.verify(platform, ipxInfo.data);
-
       const stateByIndex = new Map<string, boolean>();
       Object.keys(ipxInfo.data).map(key => {
         if (key.startsWith('R') || key.startsWith('V')) {
-          stateByIndex[key] = ipxInfo.data[key];
+          stateByIndex.set(key, ipxInfo.data[key]);
         } else if (key.startsWith('G')) {
-          stateByIndex[key] = (ipxInfo.data[key]['Etat'] === 'ON');
+          const anaKey = `G${Number(key.slice(1)).toString().padStart(2, '0')}`;
+          stateByIndex.set(anaKey, ipxInfo.data[key]['Etat'] === 'ON');
         }
       });
 
       const positionByIndex = new Map<string, number>();
       Object.keys(ipxInfo.data).map(key => {
         if (key.startsWith('G')) {
-          positionByIndex[key] = (ipxInfo.data[key]['Valeur']);
+          const anaKey = `G${Number(key.slice(1)).toString().padStart(2, '0')}`;
+          positionByIndex.set(anaKey, ipxInfo.data[key]['Valeur']);
         } else if (key.startsWith('THL')) {
-          positionByIndex[key] = ipxInfo.data[key];
+          positionByIndex.set(key,ipxInfo.data[key]);
         } else if (key.startsWith('VR')) {
           const info = key.replace('VR', '').split('-')
           if (info.length === 2) {
